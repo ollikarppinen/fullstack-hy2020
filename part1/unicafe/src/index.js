@@ -19,14 +19,20 @@ const App = () => {
 
 const Statistics = ({ good, neutral, bad }) => {
   const voteCount = good + neutral + bad
+
   return <>
     <h1>statistics</h1>
-    <div>good {good}</div>
-    <div>neutral {neutral}</div>
-    <div>bad {bad}</div>
-    <div>all {voteCount}</div>
-    <div>average {(good - bad) / voteCount}</div>
-    <div>positive {good / voteCount} %</div>
+    {voteCount ? (
+      <>
+        <div>good {good}</div>
+        <div>neutral {neutral}</div>
+        <div>bad {bad}</div>
+        <div>all {voteCount}</div>
+        <div>average {(good - bad) / voteCount}</div>
+        <div>positive {good / voteCount} %</div>
+      </>
+    ): 'No feedback given'}
+    
   </>
 }
 
