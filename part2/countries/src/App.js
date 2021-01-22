@@ -29,16 +29,29 @@ const App = () => {
         {filteredCountries.length > 10 ? (
           "Too many matches, specify another filter"
         ) : filteredCountries.length > 1 ? (
-          filteredCountries.map(({ name }) => <div key={name}>{name}</div>)
+          filteredCountries.map(({ name }) => (
+            <div key={name}>
+              {name}
+              <button onClick={() => setCountryNameFilter(name)}>show</button>
+            </div>
+          ))
         ) : filteredCountries.length > 0 ? (
           <Country {...filteredCountries[0]} />
         ) : (
-          "No matching country"
+          "No match"
         )}
       </div>
     </div>
   )
 }
+
+const Countries = ({ countries, setCountryNameFilter }) =>
+  countries.map((country) => (
+    <div key={country.name}>
+      {country.name}
+      <button onClick={() => setCountryNameFilter(country)}>show</button>
+    </div>
+  ))
 
 const Country = ({ name, capital, population, languages = [], flag }) => (
   <div>
