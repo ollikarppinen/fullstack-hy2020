@@ -6,9 +6,13 @@ const App = () => {
 
   const onInputChange = ({ target: { value } }) => setNewName(value)
   const onSubmit = (event) => {
+    event.preventDefault()
+    if (persons.some(({ name }) => newName === name)) {
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
     setPersons([...persons, { name: newName }])
     setNewName("")
-    event.preventDefault()
   }
 
   return (
