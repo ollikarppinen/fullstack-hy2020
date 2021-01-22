@@ -16,6 +16,7 @@ const App = () => {
     name.toLowerCase().includes(countryNameFilter.toLowerCase())
   )
 
+  console.log("API KEY", process.env.REACT_APP_WEATHERSTACK_API_KEY)
   return (
     <div>
       <div>
@@ -53,19 +54,51 @@ const Countries = ({ countries, setCountryNameFilter }) =>
     </div>
   ))
 
-const Country = ({ name, capital, population, languages = [], flag }) => (
-  <div>
-    <h2>{name}</h2>
-    <p>capital {capital}</p>
-    <p>population {population}</p>
-    <h3>Languages</h3>
-    <ul>
-      {languages.map(({ name }) => (
-        <li key={name}>{name}</li>
-      ))}
-    </ul>
-    <img src={flag} width="100" />
-  </div>
+const Country = ({ name, capital, population, languages = [], flag }) => {
+  const [weather, setWeather] = useState(null)
+  useEffect(() => {
+    axios
+      .get(
+        `http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_WEATHERSTACK_API_KEY}&query=${name}`
+      )
+      .then((response) => {
+        setWeather(response.data)
+        console.log("weather", response.data)
+      })
+  }, [])
+  return (
+    <div>
+      <h2>{name}</h2>
+      <p>capital {capital}</p>
+      <p>population {population}</p>
+      <h3>Languages</h3>
+      <ul>
+        {languages.map(({ name }) => (
+          <li key={name}>{name}</li>
+        ))}
+      </ul>
+      <img src={flag} width="100" />
+
+      {weather ? <Weather {...weather} /> : null}
+    </div>
+  )
+}
+
+const Weather = ({
+  location: { name },
+  current: { temperature, weather_icons, wind_speed, wind_dir },
+}) => (
+  <>
+    <h3>Weather in {name}</h3>
+    <div>
+      <strong>temperature: {temperature} Celcius</strong>
+      <div>
+        <img src={weather_icons[0]} width="100" />
+      </div>
+      <strong>wind:</strong> {wind_speed} mph direction {wind_dir}
+      {}
+    </div>
+  </>
 )
 
 export default App
