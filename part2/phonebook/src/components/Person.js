@@ -1,12 +1,13 @@
 import React from "react"
 
-const Person = ({ name, number, id, removePerson }) => {
+const Person = ({ person, removePerson }) => {
   const onRemovePerson = () => {
-    if (window.confirm(`Delete ${name}?`)) removePerson(id)
+    if (window.confirm(`Delete ${person.name}?`)) removePerson(person)
   }
   return (
     <div>
-      {name} {number} <button onClick={onRemovePerson}>delete</button>
+      {person.name} {person.number}{" "}
+      <button onClick={onRemovePerson}>delete</button>
     </div>
   )
 }

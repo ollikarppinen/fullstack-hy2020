@@ -22,13 +22,8 @@
     },
     {
       "name": "Uusi jäppinen",
-      "number": "040 123 123 12",
+      "number": "1",
       "id": 5
-    },
-    {
-      "number": "12345",
-      "name": "jaaha",
-      "id": 6
     }
   ]
 }
