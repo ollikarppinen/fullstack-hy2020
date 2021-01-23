@@ -24,6 +24,13 @@ const App = () => {
       .remove(id)
       .then((id) => setPersons(persons.filter((person) => person.id !== id)))
 
+  const updatePerson = ({ id, ...person }) =>
+    personsService
+      .update(id, person)
+      .then((person) =>
+        setPersons(persons.filter(({ id }) => person.id !== id).concat(person))
+      )
+
   const onNameFilterChange = ({ target: { value } }) => setNameFilter(value)
 
   return (
@@ -31,7 +38,11 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter value={nameFilter} onChange={onNameFilterChange} />
       <h3>add a new</h3>
-      <PersonForm persons={persons} addPerson={addPerson} />
+      <PersonForm
+        persons={persons}
+        addPerson={addPerson}
+        updatePerson={updatePerson}
+      />
       <h3>Numbers</h3>
       <Persons
         persons={persons}
