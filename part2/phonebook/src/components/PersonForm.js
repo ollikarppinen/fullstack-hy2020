@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, addPerson }) => {
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const onNewNameChange = ({ target: { value } }) => setNewName(value)
@@ -11,9 +11,10 @@ const PersonForm = ({ persons, setPersons }) => {
       alert(`${newName} is already added to phonebook`)
       return
     }
-    setPersons([...persons, { name: newName, number: newNumber }])
-    setNewName("")
-    setNewNumber("")
+    addPerson({ name: newName, number: newNumber }).then(() => {
+      setNewName("")
+      setNewNumber("")
+    })
   }
   return (
     <form onSubmit={onSubmit}>

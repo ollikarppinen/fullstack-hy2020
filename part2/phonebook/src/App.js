@@ -16,6 +16,11 @@ const App = () => {
     })
   }, [])
 
+  const addPerson = (person) =>
+    axios.post("http://localhost:3001/persons", person).then((response) => {
+      setPersons([...persons, response.data])
+    })
+
   const onNameFilterChange = ({ target: { value } }) => setNameFilter(value)
 
   return (
@@ -23,7 +28,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter value={nameFilter} onChange={onNameFilterChange} />
       <h3>add a new</h3>
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm persons={persons} addPerson={addPerson} />
       <h3>Numbers</h3>
       <Persons persons={persons} nameFilter={nameFilter} />
     </div>
