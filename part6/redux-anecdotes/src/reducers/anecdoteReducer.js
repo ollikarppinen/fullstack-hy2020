@@ -30,6 +30,11 @@ const reducer = (state = initialState, action) => {
         votes:
           anecdote.id === action.data.id ? anecdote.votes + 1 : anecdote.votes,
       }));
+    case "NEW_ANECDOTE":
+      return [
+        { content: action.data.content, id: getId(), votes: 0 },
+        ...state,
+      ];
     default:
       return state;
   }
