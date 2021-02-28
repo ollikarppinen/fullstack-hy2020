@@ -13,12 +13,15 @@ const App = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div>
-        <input name="content" />
-      </div>
-      <button type="submit">create</button>
-    </form>
+    <>
+      <h2>create new</h2>
+      <form onSubmit={onSubmit}>
+        <div>
+          <input name="content" />
+        </div>
+        <button type="submit">create</button>
+      </form>
+    </>
   );
 };
 
