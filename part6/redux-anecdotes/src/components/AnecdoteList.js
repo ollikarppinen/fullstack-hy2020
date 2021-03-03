@@ -4,9 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { voteAnecdote } from "../reducers/anecdoteReducer";
 import Notification from "./Notification";
 import { notify, hideNotification } from "../reducers/notificationReducer";
+import Filter from "./Filter";
 
 const App = () => {
   const anecdotes = useSelector((state) => state.anecdotes);
+  const filter = useSelector((state) => state.filter);
   const dispatch = useDispatch();
 
   const onVote = (anecdote) => {
@@ -17,11 +19,16 @@ const App = () => {
     }, 5000);
   };
 
+  const filteredAnecdotes = filter
+    ? anecdotes.filter((anecdote) => anecdote.content.includes(filter))
+    : anecdotes;
+
   return (
     <>
       <h2>Anecdotes</h2>
       <Notification />
-      {anecdotes.map((anecdote) => (
+      <Filter />
+      {filteredAnecdotes.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>
