@@ -11,13 +11,16 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export const notify = (message) => ({
-  type: "NOTIFY",
-  data: { message },
-});
-
-export const hideNotification = () => ({
-  type: "HIDE_NOTIFICATION",
-});
+export const setNotification = (message, duration) => async (dispatch) => {
+  dispatch({
+    type: "NOTIFY",
+    data: { message },
+  });
+  setTimeout(() => {
+    dispatch({
+      type: "HIDE_NOTIFICATION",
+    });
+  }, duration * 1000);
+};
 
 export default reducer;
