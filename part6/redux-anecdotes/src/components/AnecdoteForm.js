@@ -1,14 +1,12 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { connect } from "react-redux";
 
 import { createAnecdote } from "../reducers/anecdoteReducer";
 
-const App = () => {
-  const dispatch = useDispatch();
-
+export const AnecdoteForm = ({ createAnecdote }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
-    dispatch(createAnecdote(event.target.content.value));
+    createAnecdote(event.target.content.value);
   };
 
   return (
@@ -24,4 +22,10 @@ const App = () => {
   );
 };
 
-export default App;
+const mapDispatchToProps = { createAnecdote };
+
+const ConnectedAnecdoteForm = connect(() => {}, mapDispatchToProps)(
+  AnecdoteForm
+);
+
+export default ConnectedAnecdoteForm;
