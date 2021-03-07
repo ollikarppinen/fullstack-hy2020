@@ -5,7 +5,7 @@ const orderByVotes = (anecdotes) => anecdotes.sort((a, b) => b.votes - a.votes);
 const reducer = (state = [], action) => {
   switch (action.type) {
     case "INIT_ANECDOTES":
-      return action.data;
+      return orderByVotes(action.data);
     case "UPDATE_ANECDOTE":
       return orderByVotes(
         state.map((anecdote) =>
