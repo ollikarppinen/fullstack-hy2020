@@ -1,7 +1,11 @@
+import anecdoteService from "../services/anecdotes";
+
 const orderByVotes = (anecdotes) => anecdotes.sort((a, b) => b.votes - a.votes);
 
 const reducer = (state = [], action) => {
   switch (action.type) {
+    case "INIT_ANECDOTES":
+      return action.data;
     case "VOTE":
       return orderByVotes(
         state.map((anecdote) => ({
@@ -28,5 +32,15 @@ export const addAnecdote = (anecdote) => ({
   type: "NEW_ANECDOTE",
   data: anecdote,
 });
+
+export const initializeAnecdotes = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAll();
+    dispatch({
+      type: "INIT_ANECDOTES",
+      data: anecdotes,
+    });
+  };
+};
 
 export default reducer;

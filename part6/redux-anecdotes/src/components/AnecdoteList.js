@@ -19,7 +19,6 @@ const App = () => {
     }, 5000);
   };
 
-  console.log("anecdotes", anecdotes);
   const filteredAnecdotes = filter
     ? anecdotes.filter((anecdote) => anecdote.content.includes(filter))
     : anecdotes;
