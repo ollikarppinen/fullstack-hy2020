@@ -108,6 +108,12 @@ const CreateNew = (props) => {
       votes: 0,
     });
   };
+  const handleReset = (e) => {
+    e.preventDefault();
+    content.setValue("");
+    author.setValue("");
+    info.setValue("");
+  };
 
   return (
     <div>
@@ -141,6 +147,7 @@ const CreateNew = (props) => {
           />
         </div>
         <button>create</button>
+        <button onClick={handleReset}>reset</button>
       </form>
     </div>
   );
