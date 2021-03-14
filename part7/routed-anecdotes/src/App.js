@@ -5,6 +5,7 @@ import {
   Route,
   Link,
   useParams,
+  useHistory,
 } from "react-router-dom";
 
 const Menu = () => {
@@ -140,7 +141,7 @@ const CreateNew = (props) => {
   );
 };
 
-const App = () => {
+const Content = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
       content: "If it hurts, do it more often",
@@ -159,10 +160,14 @@ const App = () => {
   ]);
 
   const [notification, setNotification] = useState("");
+  const history = useHistory();
 
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
+    setNotification(`a new anecdote ${anecdote.content} created!`);
+    setTimeout(() => setNotification(""), 3000);
+    history.push(`/anecdotes/${anecdote.id}`);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -179,15 +184,16 @@ const App = () => {
   };
 
   return (
-    <Router>
+    <>
       <h1>Software anecdotes</h1>
+      <div>{notification}</div>
       <Menu />
       <Switch>
         <Route path="/anecdotes/:id">
           <Anecdote anecdotes={anecdotes} />
         </Route>
         <Route path="/create">
-          <CreateNew addNew={addNew} />
+          <CreateNew addNew={addNew.bind(this)} />
         </Route>
         <Route path="/about">
           <About />
@@ -197,8 +203,14 @@ const App = () => {
         </Route>
       </Switch>
       <Footer />
-    </Router>
+    </>
   );
 };
+
+const App = () => (
+  <Router>
+    <Content />
+  </Router>
+);
 
 export default App;
