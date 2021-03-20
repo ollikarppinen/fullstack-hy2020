@@ -1,0 +1,40 @@
+@port = 3003
+###
+http://localhost:{{port}}/api/blogs HTTP/1.1
+###
+POST http://localhost:{{port}}/api/blogs HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QzIiwiaWQiOiI2MDFiMDNhZWY2NTcwOTQ1OWYzODI1MGYiLCJpYXQiOjE2MTIzODQxNjJ9.-xKTwLk5XVY_Tzjlkg4SBCMIRHezfFPAlVTCNjoQPxA
+
+{
+    "title": "Root kolmoset blogi kakkonen",
+    "author": "bluu",
+    "url": "blaa",
+    "likes": "123"
+}
+###
+http://localhost:{{port}}/api/users HTTP/1.1
+###
+POST http://localhost:{{port}}/api/users HTTP/1.1
+content-type: application/json
+
+{
+    "username": "root3",
+    "name": "Superuser",
+    "password": "salainen"
+}
+###
+POST http://localhost:{{port}}/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "root1",
+    "password": "salainen"
+}
+###
+DELETE http://localhost:{{port}}/api/blogs/601b046610e770479510d98d HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QxIiwiaWQiOiI2MDFiMDAzNWNmOGI5YzM4MzZlMDhkOTgiLCJpYXQiOjE2MTIzODQ3NDd9.-mC-Lb8q-KcQXWxAYJTSNaa3IdSnj6iOn0HKFvWxpkw
+###
+POST http://localhost:{{port}}/api/testing/reset HTTP/1.1
+content-type: application/json
