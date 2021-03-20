@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
 import blogsService from "./services/blogs";
 import loginService from "./services/login";
@@ -7,19 +8,28 @@ import Togglable from "./components/Togglable";
 import NewBlogForm from "./components/NewBlogForm";
 import PropTypes from "prop-types";
 
+import { showMessage, showErrorMessage } from "./reducers/messages";
+
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [message, setMessage] = useState(null);
+  // const [errorMessage, setErrorMessage] = useState(null);
+  // const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(showMessage("FIRST MESSAGE!"));
     blogsService
       .getAll()
       .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
   }, []);
+
+  const errorMessage = useSelector(
+    ({ messages: { errorMessage } }) => errorMessage
+  );
+  const message = useSelector(({ messages: { message } }) => message);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -45,10 +55,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("Wrong credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      dispatch(showErrorMessage("Wrong credentials"));
     }
   };
 
@@ -96,11 +103,11 @@ const App = () => {
       const createdBlog = await blogsService.create(newBlog);
       blogFormRef.current.toggleVisibility();
       setBlogs(blogs.concat(createdBlog));
-      setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`);
-      setTimeout(() => setMessage(null), 5000);
+      dispatch(
+        showMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+      );
     } catch (exception) {
-      setErrorMessage(exception.response.data.error);
-      setTimeout(() => setErrorMessage(null), 5000);
+      dispatch(showErrorMessage(exception.response.data.error));
     }
   };
 
