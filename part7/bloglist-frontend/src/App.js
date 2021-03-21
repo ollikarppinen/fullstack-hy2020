@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
-import blogsService from "./services/blogs";
 import loginService from "./services/login";
 import "./App.css";
 import Togglable from "./components/Togglable";
 import NewBlogForm from "./components/NewBlogForm";
 
+import { useBlogsService } from "./hooks/index";
 import { setUser, removeUser } from "./reducers/user";
 import {
   showMessage,
@@ -19,9 +19,12 @@ import {
   updateBlog,
   removeBlog,
 } from "./reducers/blogs";
+import Notification from "./components/Notification";
 
 const App = () => {
   const dispatch = useDispatch();
+
+  const blogsService = useBlogsService();
 
   const user = useSelector(({ user }) => user);
 
@@ -29,17 +32,13 @@ const App = () => {
     dispatch(getAllBlogs(blogsService));
   }, []);
 
-  useEffect(() => {
-    if (user && user.token) {
-      blogsService.setToken(user.token);
-    }
-  }, [user]);
-
   return <div>{user ? <BlogList /> : <LoginForm />}</div>;
 };
 
 const BlogList = () => {
   const dispatch = useDispatch();
+
+  const blogsService = useBlogsService();
 
   const blogFormRef = useRef();
 
@@ -94,6 +93,8 @@ const BlogList = () => {
 const LogoutForm = () => {
   const dispatch = useDispatch();
 
+  const blogsService = useBlogsService();
+
   const user = useSelector(({ user }) => user);
 
   const handleLogout = () => {
@@ -111,6 +112,8 @@ const LogoutForm = () => {
 
 const LoginForm = () => {
   const dispatch = useDispatch();
+
+  const blogsService = useBlogsService();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -162,21 +165,6 @@ const LoginForm = () => {
         </button>
       </form>
     </div>
-  );
-};
-
-const Notification = () => {
-  const errorMessage = useSelector(
-    ({ messages: { errorMessage } }) => errorMessage
-  );
-
-  const message = useSelector(({ messages: { message } }) => message);
-
-  return (
-    <>
-      {message ? <div className="success">{message}</div> : null}
-      {errorMessage ? <div className="error">{errorMessage}</div> : null}
-    </>
   );
 };
 
