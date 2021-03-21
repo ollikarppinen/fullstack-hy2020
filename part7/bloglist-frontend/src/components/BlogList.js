@@ -5,8 +5,6 @@ import { useBlogsService } from "../hooks/index";
 import { showMessage, handleError } from "../reducers/messages";
 import { createBlog, updateBlog, removeBlog } from "../reducers/blogs";
 
-import Notification from "./Notification";
-import LogoutForm from "./LogoutForm";
 import Blog from "./Blog";
 import Togglable from "./Togglable";
 import NewBlogForm from "./NewBlogForm";
@@ -42,9 +40,6 @@ const BlogList = () => {
   };
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification />
-      <LogoutForm />
       <Togglable
         showButtonLabel="new note"
         hideButtonLabel="cancel"
