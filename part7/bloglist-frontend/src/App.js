@@ -8,6 +8,7 @@ import Togglable from "./components/Togglable";
 import NewBlogForm from "./components/NewBlogForm";
 import PropTypes from "prop-types";
 
+import { setUser, removeUser } from "./reducers/user";
 import { showMessage, showErrorMessage } from "./reducers/messages";
 import {
   createBlog,
@@ -17,30 +18,30 @@ import {
 } from "./reducers/blogs";
 
 const App = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getAllBlogs(blogsService));
-  }, []);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const blogs = useSelector(({ blogs: { blogs } }) => blogs);
 
   const errorMessage = useSelector(
     ({ messages: { errorMessage } }) => errorMessage
   );
+
   const message = useSelector(({ messages: { message } }) => message);
 
+  const user = useSelector(({ user }) => user);
+
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+    dispatch(getAllBlogs(blogsService));
+  }, []);
+
+  useEffect(() => {
+    if (user && user.token) {
       blogsService.setToken(user.token);
     }
-  }, []);
+  }, [user]);
 
   const blogFormRef = useRef();
 
@@ -52,7 +53,7 @@ const App = () => {
         password,
       });
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
-      setUser(user);
+      dispatch(setUser(user));
       blogsService.setToken(user.token);
       setUsername("");
       setPassword("");
@@ -62,7 +63,7 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    setUser(null);
+    dispatch(removeUser());
     blogsService.setToken(null);
     window.localStorage.removeItem("loggedBlogAppUser");
   };
@@ -70,8 +71,7 @@ const App = () => {
   const loginForm = () => (
     <div>
       <h2>log in to application</h2>
-      <Notification className="error" message={errorMessage} />
-      <Notification className="success" message={message} />
+      <Notification />
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -142,8 +142,7 @@ const App = () => {
   const blogList = () => (
     <div>
       <h2>blogs</h2>
-      <Notification className="error" message={errorMessage} />
-      <Notification className="success" message={message} />
+      <Notification />
       <p>
         {user.name} logged in <button onClick={handleLogout}>log out</button>
       </p>
@@ -175,7 +174,22 @@ const App = () => {
   );
 };
 
-const Notification = ({ message, ...props }) => {
+const Notification = () => {
+  const errorMessage = useSelector(
+    ({ messages: { errorMessage } }) => errorMessage
+  );
+
+  const message = useSelector(({ messages: { message } }) => message);
+
+  return (
+    <>
+      {message ? <div className="success">{message}</div> : null}
+      {errorMessage ? <div className="error">{errorMessage}</div> : null}
+    </>
+  );
+};
+
+const Nootification = ({ message, ...props }) => {
   if (message === null) {
     return null;
   }
@@ -183,7 +197,7 @@ const Notification = ({ message, ...props }) => {
   return <div {...props}>{message}</div>;
 };
 
-Notification.propTypes = {
+Nootification.propTypes = {
   message: PropTypes.string,
 };
 
