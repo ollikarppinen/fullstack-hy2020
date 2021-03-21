@@ -6,10 +6,13 @@ import loginService from "./services/login";
 import "./App.css";
 import Togglable from "./components/Togglable";
 import NewBlogForm from "./components/NewBlogForm";
-import PropTypes from "prop-types";
 
 import { setUser, removeUser } from "./reducers/user";
-import { showMessage, showErrorMessage } from "./reducers/messages";
+import {
+  showMessage,
+  showErrorMessage,
+  handleError,
+} from "./reducers/messages";
 import {
   createBlog,
   getAllBlogs,
@@ -19,17 +22,6 @@ import {
 
 const App = () => {
   const dispatch = useDispatch();
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const blogs = useSelector(({ blogs: { blogs } }) => blogs);
-
-  const errorMessage = useSelector(
-    ({ messages: { errorMessage } }) => errorMessage
-  );
-
-  const message = useSelector(({ messages: { message } }) => message);
 
   const user = useSelector(({ user }) => user);
 
@@ -43,7 +35,85 @@ const App = () => {
     }
   }, [user]);
 
+  return <div>{user ? <BlogList /> : <LoginForm />}</div>;
+};
+
+const BlogList = () => {
+  const dispatch = useDispatch();
+
   const blogFormRef = useRef();
+
+  const blogs = useSelector(({ blogs: { blogs } }) => blogs);
+
+  const handleBlogRemove = (blog) =>
+    dispatch(handleError(removeBlog(blogsService, blog)));
+
+  const handleBlogLike = (blog) =>
+    dispatch(
+      handleError(
+        updateBlog(blogsService, {
+          ...blog,
+          likes: blog.likes + 1,
+        })
+      )
+    );
+
+  const handleBlogCreate = (newBlog) => {
+    dispatch(handleError(createBlog(blogsService, newBlog)));
+    blogFormRef.current.toggleVisibility();
+    dispatch(
+      showMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+    );
+  };
+  return (
+    <div>
+      <h2>blogs</h2>
+      <Notification />
+      <LogoutForm />
+      <Togglable
+        showButtonLabel="new note"
+        hideButtonLabel="cancel"
+        ref={blogFormRef}
+      >
+        <NewBlogForm createBlog={handleBlogCreate} />
+      </Togglable>
+      <div>
+        {blogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            likeBlog={handleBlogLike}
+            removeBlog={handleBlogRemove}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const LogoutForm = () => {
+  const dispatch = useDispatch();
+
+  const user = useSelector(({ user }) => user);
+
+  const handleLogout = () => {
+    dispatch(removeUser());
+    blogsService.setToken(null);
+    window.localStorage.removeItem("loggedBlogAppUser");
+  };
+
+  return (
+    <p>
+      {user.name} logged in <button onClick={handleLogout}>log out</button>
+    </p>
+  );
+};
+
+const LoginForm = () => {
+  const dispatch = useDispatch();
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -62,13 +132,7 @@ const App = () => {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(removeUser());
-    blogsService.setToken(null);
-    window.localStorage.removeItem("loggedBlogAppUser");
-  };
-
-  const loginForm = () => (
+  return (
     <div>
       <h2>log in to application</h2>
       <Notification />
@@ -99,79 +163,6 @@ const App = () => {
       </form>
     </div>
   );
-
-  const handleBlogCreate = (newBlog) => {
-    try {
-      dispatch(createBlog(blogsService, newBlog));
-      blogFormRef.current.toggleVisibility();
-      dispatch(
-        showMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
-      );
-    } catch (exception) {
-      dispatch(showErrorMessage(exception.response.data.error));
-    }
-  };
-
-  const handleBlogLike = (blog) =>
-    handleError(() =>
-      dispatch(
-        updateBlog(blogsService, {
-          ...blog,
-          likes: blog.likes + 1,
-        })
-      )
-    );
-
-  const handleBlogRemove = (blog) =>
-    handleError(() => dispatch(removeBlog(blogsService, blog)));
-
-  const handleError = (f) => {
-    try {
-      f();
-    } catch (exception) {
-      const errorMessage =
-        exception.response &&
-        exception.response.data &&
-        exception.response.data.error
-          ? exception.response.data.error
-          : "Something unexpected went wrong :[";
-      dispatch(showErrorMessage(errorMessage));
-    }
-  };
-
-  const blogList = () => (
-    <div>
-      <h2>blogs</h2>
-      <Notification />
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>log out</button>
-      </p>
-      <Togglable
-        showButtonLabel="new note"
-        hideButtonLabel="cancel"
-        ref={blogFormRef}
-      >
-        <NewBlogForm createBlog={handleBlogCreate} />
-      </Togglable>
-      <div>
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            likeBlog={handleBlogLike}
-            removeBlog={handleBlogRemove}
-          />
-        ))}
-      </div>
-    </div>
-  );
-
-  return (
-    <div>
-      {user === null && loginForm()}
-      {user !== null && blogList()}
-    </div>
-  );
 };
 
 const Notification = () => {
@@ -187,18 +178,6 @@ const Notification = () => {
       {errorMessage ? <div className="error">{errorMessage}</div> : null}
     </>
   );
-};
-
-const Nootification = ({ message, ...props }) => {
-  if (message === null) {
-    return null;
-  }
-
-  return <div {...props}>{message}</div>;
-};
-
-Nootification.propTypes = {
-  message: PropTypes.string,
 };
 
 export default App;

@@ -51,3 +51,17 @@ export const showErrorMessage = (errorMessage) => {
     setTimeout(() => dispatch(resetErrorMessage()), 3000);
   };
 };
+
+export const handleError = (action) => (dispatch) => {
+  try {
+    dispatch(action);
+  } catch (exception) {
+    const errorMessage =
+      exception.response &&
+      exception.response.data &&
+      exception.response.data.error
+        ? exception.response.data.error
+        : "Something unexpected went wrong :[";
+    dispatch(showErrorMessage(errorMessage));
+  }
+};
