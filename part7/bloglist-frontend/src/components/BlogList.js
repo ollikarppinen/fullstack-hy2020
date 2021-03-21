@@ -39,7 +39,8 @@ const BlogList = () => {
     );
   };
   return (
-    <div>
+    <>
+      <h2>Blogs</h2>
       <Togglable
         showButtonLabel="new blog"
         hideButtonLabel="cancel"
@@ -56,7 +57,7 @@ const BlogList = () => {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

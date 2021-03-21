@@ -27,10 +27,10 @@ const UserList = () => {
   );
 
   return (
-    <div>
+    <>
       <h2>Users</h2>
       {users.length > 0 ? usersTable() : "no users"}
-    </div>
+    </>
   );
 };
 

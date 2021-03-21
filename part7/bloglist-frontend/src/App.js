@@ -5,13 +5,13 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
 
 import Notification from "./components/Notification";
-import LogoutForm from "./components/LogoutForm";
 import LoginForm from "./components/LoginForm";
 import BlogList from "./components/BlogList";
 import BlogDetails from "./components/BlogDetails";
 import UserList from "./components/UserList";
 import UserDetails from "./components/UserDetails";
 import NoMatch from "./components/NoMatch";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   const currentUser = useSelector(({ currentUser }) => currentUser);
@@ -19,11 +19,10 @@ const App = () => {
   if (!currentUser) return <LoginForm />;
 
   return (
-    <div>
-      <h2>Blogs</h2>
+    <Router>
+      <Navbar />
       <Notification />
-      <LogoutForm />
-      <Router>
+      <div className="content">
         <Switch>
           <Route exact path={["/", "/blogs"]}>
             <BlogList />
@@ -41,8 +40,8 @@ const App = () => {
             <NoMatch />
           </Route>
         </Switch>
-      </Router>
-    </div>
+      </div>
+    </Router>
   );
 };
 

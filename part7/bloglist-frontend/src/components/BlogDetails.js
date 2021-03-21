@@ -53,7 +53,7 @@ const BlogDetails = () => {
   if (!blog) return <NoMatch />;
 
   return (
-    <div>
+    <>
       <h1>
         {blog.title} {blog.author}
       </h1>
@@ -64,7 +64,7 @@ const BlogDetails = () => {
       </div>
       <div>added by {user ? user.name : "?"}</div>
       <button onClick={onBlogRemove}>remove</button>
-    </div>
+    </>
   );
 };
 
