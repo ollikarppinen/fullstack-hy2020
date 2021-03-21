@@ -9,22 +9,24 @@ import NewBlogForm from "./components/NewBlogForm";
 import PropTypes from "prop-types";
 
 import { showMessage, showErrorMessage } from "./reducers/messages";
+import {
+  createBlog,
+  getAllBlogs,
+  updateBlog,
+  removeBlog,
+} from "./reducers/blogs";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const [errorMessage, setErrorMessage] = useState(null);
-  // const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
-  const [blogs, setBlogs] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(showMessage("FIRST MESSAGE!"));
-    blogsService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
+    dispatch(getAllBlogs(blogsService));
   }, []);
+
+  const blogs = useSelector(({ blogs: { blogs } }) => blogs);
 
   const errorMessage = useSelector(
     ({ messages: { errorMessage } }) => errorMessage
@@ -98,11 +100,10 @@ const App = () => {
     </div>
   );
 
-  const createBlog = async (newBlog) => {
+  const handleBlogCreate = (newBlog) => {
     try {
-      const createdBlog = await blogsService.create(newBlog);
+      dispatch(createBlog(blogsService, newBlog));
       blogFormRef.current.toggleVisibility();
-      setBlogs(blogs.concat(createdBlog));
       dispatch(
         showMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
       );
@@ -111,23 +112,31 @@ const App = () => {
     }
   };
 
-  const likeBlog = async (blog) => {
-    const updatedBlog = await blogsService.put({
-      ...blog,
-      likes: blog.likes + 1,
-    });
-    setBlogs(
-      blogs
-        .map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
-        .sort((a, b) => b.likes - a.likes)
+  const handleBlogLike = (blog) =>
+    handleError(() =>
+      dispatch(
+        updateBlog(blogsService, {
+          ...blog,
+          likes: blog.likes + 1,
+        })
+      )
     );
-  };
 
-  const removeBlog = async (blog) => {
-    await blogsService.remove(blog);
-    setBlogs(
-      blogs.filter(({ id }) => id !== blog.id).sort((a, b) => b.likes - a.likes)
-    );
+  const handleBlogRemove = (blog) =>
+    handleError(() => dispatch(removeBlog(blogsService, blog)));
+
+  const handleError = (f) => {
+    try {
+      f();
+    } catch (exception) {
+      const errorMessage =
+        exception.response &&
+        exception.response.data &&
+        exception.response.data.error
+          ? exception.response.data.error
+          : "Something unexpected went wrong :[";
+      dispatch(showErrorMessage(errorMessage));
+    }
   };
 
   const blogList = () => (
@@ -143,15 +152,15 @@ const App = () => {
         hideButtonLabel="cancel"
         ref={blogFormRef}
       >
-        <NewBlogForm createBlog={createBlog} />
+        <NewBlogForm createBlog={handleBlogCreate} />
       </Togglable>
       <div>
         {blogs.map((blog) => (
           <Blog
             key={blog.id}
             blog={blog}
-            likeBlog={likeBlog}
-            removeBlog={removeBlog}
+            likeBlog={handleBlogLike}
+            removeBlog={handleBlogRemove}
           />
         ))}
       </div>

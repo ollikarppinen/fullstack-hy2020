@@ -4,10 +4,11 @@ import reduxThunk from "redux-thunk";
 import reduxLogger from "redux-logger";
 
 import messages from "./reducers/messages";
+import blogs from "./reducers/blogs";
 
-const middleware = [reduxLogger, reduxThunk];
+const middleware = [reduxThunk, reduxLogger];
 
-const reducer = combineReducers({ messages });
+const reducer = combineReducers({ messages, blogs });
 
 const store = createStore(
   reducer,
