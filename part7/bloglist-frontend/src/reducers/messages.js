@@ -52,9 +52,9 @@ export const showErrorMessage = (errorMessage) => {
   };
 };
 
-export const handleError = (action) => (dispatch) => {
+export const handleError = (action) => async (dispatch) => {
   try {
-    dispatch(action);
+    await dispatch(action);
   } catch (exception) {
     const errorMessage =
       exception.response &&

@@ -1,10 +1,6 @@
 import axios from "axios";
 
-const crudResourceService = function() {
-  const setBaseUrl = (baseUrl) => {
-    this.baseUrl = baseUrl;
-  };
-
+const crudResourceService = function(baseUrl) {
   const setToken = (token) => {
     this.token = `bearer ${token}`;
   };
@@ -14,7 +10,7 @@ const crudResourceService = function() {
       headers: { Authorization: this.token },
     };
 
-    const response = await axios.post(this.baseUrl, object, config);
+    const response = await axios.post(baseUrl, object, config);
     return response.data;
   };
 
@@ -23,11 +19,7 @@ const crudResourceService = function() {
       headers: { Authorization: this.token },
     };
 
-    const response = await axios.put(
-      `${this.baseUrl}/${object.id}`,
-      object,
-      config
-    );
+    const response = await axios.put(`${baseUrl}/${object.id}`, object, config);
     return response.data;
   };
 
@@ -36,16 +28,16 @@ const crudResourceService = function() {
       headers: { Authorization: this.token },
     };
 
-    const response = await axios.delete(`${this.baseUrl}/${object.id}`, config);
+    const response = await axios.delete(`${baseUrl}/${object.id}`, config);
     return response.data;
   };
 
   const getAll = () => {
-    const request = axios.get(this.baseUrl);
+    const request = axios.get(baseUrl);
     return request.then((response) => response.data);
   };
 
-  return { getAll, setBaseUrl, create, setToken, put, remove };
-}.bind({})();
+  return { getAll, create, setToken, put, remove };
+}.bind({});
 
 export default crudResourceService;

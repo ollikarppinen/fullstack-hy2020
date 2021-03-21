@@ -10,8 +10,8 @@ export const useUsersService = () => useCrudResource("/api/users");
 const useCrudResource = (baseUrl) => {
   const { token } = useSelector(({ user }) => user || {});
 
-  crudResourceService.setBaseUrl(baseUrl);
-  useEffect(() => crudResourceService.setToken(token), [token]);
+  const service = crudResourceService(baseUrl);
+  useEffect(() => service.setToken(token), [token]);
 
-  return crudResourceService;
+  return service;
 };

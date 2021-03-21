@@ -8,9 +8,9 @@ const currentUserReducer = (
   action
 ) => {
   switch (action.type) {
-    case "SET_USER":
+    case "SET_CURRENT_USER":
       return action.user;
-    case "REMOVE_USER":
+    case "REMOVE_CURRENT_USER":
       return null;
     default:
       return state;

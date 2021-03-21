@@ -1,18 +1,22 @@
 import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 import { useBlogsService } from "../hooks/index";
 import { showMessage, handleError } from "../reducers/messages";
-import {
-  createBlog,
-  updateBlog,
-  removeBlog,
-  getAllBlogs,
-} from "../reducers/blogs";
+import { createBlog, getAllBlogs } from "../reducers/blogs";
 
-import Blog from "./Blog";
 import Togglable from "./Togglable";
 import NewBlogForm from "./NewBlogForm";
+
+const blogStyle = {
+  paddingTop: 10,
+  paddingLeft: 2,
+  border: "solid",
+  borderWidth: 1,
+
+  marginBottom: 5,
+};
 
 const BlogList = () => {
   const dispatch = useDispatch();
@@ -27,19 +31,6 @@ const BlogList = () => {
     dispatch(getAllBlogs(blogsService));
   }, []);
 
-  const handleBlogRemove = (blog) =>
-    dispatch(handleError(removeBlog(blogsService, blog)));
-
-  const handleBlogLike = (blog) =>
-    dispatch(
-      handleError(
-        updateBlog(blogsService, {
-          ...blog,
-          likes: blog.likes + 1,
-        })
-      )
-    );
-
   const handleBlogCreate = (newBlog) => {
     dispatch(handleError(createBlog(blogsService, newBlog)));
     blogFormRef.current.toggleVisibility();
@@ -50,7 +41,7 @@ const BlogList = () => {
   return (
     <div>
       <Togglable
-        showButtonLabel="new note"
+        showButtonLabel="new blog"
         hideButtonLabel="cancel"
         ref={blogFormRef}
       >
@@ -58,12 +49,11 @@ const BlogList = () => {
       </Togglable>
       <div>
         {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            likeBlog={handleBlogLike}
-            removeBlog={handleBlogRemove}
-          />
+          <div key={blog.id} style={blogStyle}>
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} {blog.author}
+            </Link>
+          </div>
         ))}
       </div>
     </div>
