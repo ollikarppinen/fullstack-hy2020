@@ -1,9 +1,14 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useBlogsService } from "../hooks/index";
 import { showMessage, handleError } from "../reducers/messages";
-import { createBlog, updateBlog, removeBlog } from "../reducers/blogs";
+import {
+  createBlog,
+  updateBlog,
+  removeBlog,
+  getAllBlogs,
+} from "../reducers/blogs";
 
 import Blog from "./Blog";
 import Togglable from "./Togglable";
@@ -17,6 +22,10 @@ const BlogList = () => {
   const blogFormRef = useRef();
 
   const blogs = useSelector(({ blogs: { blogs } }) => blogs);
+
+  useEffect(() => {
+    dispatch(getAllBlogs(blogsService));
+  }, []);
 
   const handleBlogRemove = (blog) =>
     dispatch(handleError(removeBlog(blogsService, blog)));

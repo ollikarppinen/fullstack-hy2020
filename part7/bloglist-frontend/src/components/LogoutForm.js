@@ -2,24 +2,25 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useBlogsService } from "../hooks/index";
-import { removeUser } from "../reducers/user";
+import { removeCurrentUser } from "../reducers/currentUser";
 
 const LogoutForm = () => {
   const dispatch = useDispatch();
 
   const blogsService = useBlogsService();
 
-  const user = useSelector(({ user }) => user);
+  const currentUser = useSelector(({ currentUser }) => currentUser);
 
   const handleLogout = () => {
-    dispatch(removeUser());
+    dispatch(removeCurrentUser());
     blogsService.setToken(null);
     window.localStorage.removeItem("loggedBlogAppUser");
   };
 
   return (
     <p>
-      {user.name} logged in <button onClick={handleLogout}>log out</button>
+      {currentUser.name} logged in{" "}
+      <button onClick={handleLogout}>log out</button>
     </p>
   );
 };

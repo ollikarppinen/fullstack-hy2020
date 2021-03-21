@@ -1,39 +1,28 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   useLocation,
 } from "react-router-dom";
 
 import "./App.css";
 
-import { useBlogsService } from "./hooks/index";
-import { getAllBlogs } from "./reducers/blogs";
-
 import Notification from "./components/Notification";
 import LogoutForm from "./components/LogoutForm";
 import LoginForm from "./components/LoginForm";
 import BlogList from "./components/BlogList";
+import UserList from "./components/UserList";
 
 const App = () => {
-  const dispatch = useDispatch();
+  const currentUser = useSelector(({ currentUser }) => currentUser);
 
-  const blogsService = useBlogsService();
-
-  const user = useSelector(({ user }) => user);
-
-  useEffect(() => {
-    dispatch(getAllBlogs(blogsService));
-  }, []);
-
-  if (!user) return <LoginForm />;
+  if (!currentUser) return <LoginForm />;
 
   return (
     <div>
-      <h2>blogs</h2>
+      <h2>Blogs</h2>
       <Notification />
       <LogoutForm />
       <Router>
@@ -51,10 +40,6 @@ const App = () => {
       </Router>
     </div>
   );
-};
-
-const UserList = () => {
-  return <div>users</div>;
 };
 
 const NoMatch = () => {

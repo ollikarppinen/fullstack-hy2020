@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 
 import loginService from "../services/login";
 import { useBlogsService } from "../hooks/index";
-import { setUser } from "../reducers/user";
+import { setCurrentUser } from "../reducers/currentUser";
 import { showErrorMessage } from "../reducers/messages";
 import Notification from "./Notification";
 
@@ -23,7 +23,7 @@ const LoginForm = () => {
         password,
       });
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
-      dispatch(setUser(user));
+      dispatch(setCurrentUser(user));
       blogsService.setToken(user.token);
       setUsername("");
       setPassword("");
