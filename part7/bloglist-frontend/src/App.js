@@ -14,6 +14,8 @@ import LogoutForm from "./components/LogoutForm";
 import LoginForm from "./components/LoginForm";
 import BlogList from "./components/BlogList";
 import UserList from "./components/UserList";
+import UserDetails from "./components/UserDetails";
+import NoMatch from "./components/NoMatch";
 
 const App = () => {
   const currentUser = useSelector(({ currentUser }) => currentUser);
@@ -30,6 +32,9 @@ const App = () => {
           <Route exact path={["/", "/blogs"]}>
             <BlogList />
           </Route>
+          <Route path="/users/:id">
+            <UserDetails />
+          </Route>
           <Route path="/users">
             <UserList />
           </Route>
@@ -38,18 +43,6 @@ const App = () => {
           </Route>
         </Switch>
       </Router>
-    </div>
-  );
-};
-
-const NoMatch = () => {
-  let location = useLocation();
-
-  return (
-    <div>
-      <h3>
-        No match for <code>{location.pathname}</code>
-      </h3>
     </div>
   );
 };

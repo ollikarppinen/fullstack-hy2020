@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 import { useUsersService } from "../hooks/index";
 import { getAllUsers } from "../reducers/users";
@@ -33,10 +34,12 @@ const UserList = () => {
   );
 };
 
-const User = ({ name, blogs }) => {
+const User = ({ id, name, blogs }) => {
   return (
     <tr>
-      <td>{name}</td>
+      <td>
+        <Link to={`/users/${id}`}>{name}</Link>
+      </td>
       <td>{blogs.length}</td>
     </tr>
   );
