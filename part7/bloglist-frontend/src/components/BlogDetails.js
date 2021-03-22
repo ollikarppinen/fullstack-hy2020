@@ -64,8 +64,21 @@ const BlogDetails = () => {
       </div>
       <div>added by {user ? user.name : "?"}</div>
       <button onClick={onBlogRemove}>remove</button>
+      <Comments blog={blog} />
     </>
   );
 };
+
+const Comments = ({ blog }) => {
+  const { comments } = blog;
+  return (
+    <>
+      <h3>comments</h3>
+      <ul>{comments.map(Comment)}</ul>
+    </>
+  );
+};
+
+const Comment = ({ id, text }) => <li key={id}>{text}</li>;
 
 export default BlogDetails;

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import { useUsersService } from "../hooks/index";
 import { getAllUsers } from "../reducers/users";
@@ -37,6 +37,10 @@ const BlogList = ({ user: { blogs } }) => {
   return <ul>{blogs.map(BlogListItem)}</ul>;
 };
 
-const BlogListItem = ({ title }) => <li>{title}</li>;
+const BlogListItem = ({ id, title }) => (
+  <li key={id}>
+    <Link to={`/blogs/${id}`}>{title}</Link>
+  </li>
+);
 
 export default UserDetails;

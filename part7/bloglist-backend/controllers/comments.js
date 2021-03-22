@@ -1,11 +1,10 @@
-const blogsRouter = require("express").Router();
+const commentsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const Comment = require("../models/comment");
 const jwt = require("jsonwebtoken");
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({}).populate("comments");
+  const blogs = await Blog.find({});
   response.json(blogs);
 });
 
@@ -46,35 +45,8 @@ blogsRouter.put("/:id", async (request, response) => {
     { _id: request.params.id },
     { title, author, url, likes },
     { new: true }
-  ).populate("comments");
-  response.status(200).json(blog);
-});
-
-blogsRouter.post("/:id/comments", async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (!request.token || !decodedToken.id) {
-    return response.status(401).json({ error: "token missing or invalid" });
-  }
-
-  const user = await User.findById(decodedToken.id);
-  const blog = await Blog.findById(request.params.id);
-  const comment = new Comment({
-    ...request.body,
-    user: user._id,
-    blog: blog._id,
-  });
-
-  const savedComment = await comment.save();
-  user.comments = user.comments.concat(savedComment._id);
-  await user.save();
-  blog.comments = blog.comments.concat(savedComment._id);
-  await blog.save();
-
-  // Seems dumb
-  const blogWithComments = await Blog.findById(request.params.id).populate(
-    "comments"
   );
-  response.status(201).json(blogWithComments);
+  response.status(200).json(blog);
 });
 
 module.exports = blogsRouter;
