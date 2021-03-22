@@ -1,11 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import { useBlogsService } from "../hooks/index";
-import { useUsersService } from "../hooks/index";
+import {
+  useBlogsService,
+  useUsersService,
+  useBlogCommentsService,
+} from "../hooks/index";
 import { getAllUsers } from "../reducers/users";
-import { updateBlog, removeBlog, getAllBlogs } from "../reducers/blogs";
+import {
+  updateBlog,
+  removeBlog,
+  getAllBlogs,
+  createComment,
+} from "../reducers/blogs";
 import { handleError } from "../reducers/messages";
 
 import NoMatch from "./NoMatch";
@@ -70,10 +78,20 @@ const BlogDetails = () => {
 };
 
 const Comments = ({ blog }) => {
+  const dispatch = useDispatch();
+
+  const [text, setText] = useState("");
+  const blogCommentsService = useBlogCommentsService(blog);
+
+  const handleCreateComment = () =>
+    dispatch(handleError(createComment(blogCommentsService, { text })));
+
   const { comments } = blog;
   return (
     <>
       <h3>comments</h3>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={handleCreateComment}>add comment</button>
       <ul>{comments.map(Comment)}</ul>
     </>
   );

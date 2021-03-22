@@ -54,6 +54,11 @@ export const getAllBlogs = (blogsService) => (dispatch) =>
 export const createBlog = (blogsService, blog) => (dispatch) =>
   blogsService.create(blog).then((blog) => dispatch(addBlogAction(blog)));
 
+export const createComment = (blogCommentsService, comment) => (dispatch) =>
+  blogCommentsService
+    .create(comment)
+    .then((blog) => dispatch(updateBlogAction(blog)));
+
 export const updateBlog = (blogsService, blog) => (dispatch) =>
   blogsService.put(blog).then((blog) => dispatch(updateBlogAction(blog)));
 
