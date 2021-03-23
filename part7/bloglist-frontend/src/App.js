@@ -19,10 +19,10 @@ const App = () => {
   if (!currentUser) return <LoginForm />;
 
   return (
-    <Router>
-      <Navbar />
-      <Notification />
-      <div className="content">
+    <div className="container">
+      <Router>
+        <Navbar />
+        <Notification />
         <Switch>
           <Route exact path={["/", "/blogs"]}>
             <BlogList />
@@ -40,8 +40,8 @@ const App = () => {
             <NoMatch />
           </Route>
         </Switch>
-      </div>
-    </Router>
+      </Router>
+    </div>
   );
 };
 
