@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { ListGroup } from "react-bootstrap";
 
 import { useBlogsService } from "../hooks/index";
 import { showMessage, handleError } from "../reducers/messages";
@@ -8,15 +9,6 @@ import { createBlog, getAllBlogs } from "../reducers/blogs";
 
 import Togglable from "./Togglable";
 import NewBlogForm from "./NewBlogForm";
-
-const blogStyle = {
-  paddingTop: 10,
-  paddingLeft: 2,
-  border: "solid",
-  borderWidth: 1,
-
-  marginBottom: 5,
-};
 
 const BlogList = () => {
   const dispatch = useDispatch();
@@ -48,15 +40,15 @@ const BlogList = () => {
       >
         <NewBlogForm createBlog={handleBlogCreate} />
       </Togglable>
-      <div>
+      <ListGroup>
         {blogs.map((blog) => (
-          <div key={blog.id} style={blogStyle}>
+          <ListGroup.Item key={blog.id}>
             <Link to={`/blogs/${blog.id}`}>
               {blog.title} {blog.author}
             </Link>
-          </div>
+          </ListGroup.Item>
         ))}
-      </div>
+      </ListGroup>
     </>
   );
 };
