@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-
 import PropTypes from "prop-types";
+import { Button } from "react-bootstrap";
 
 const NewBlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState("");
@@ -48,9 +48,9 @@ const NewBlogForm = ({ createBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button id="submit-new-blog" type="submit">
+        <Button id="submit-new-blog" type="submit">
           create
-        </button>
+        </Button>
       </form>
     </div>
   );

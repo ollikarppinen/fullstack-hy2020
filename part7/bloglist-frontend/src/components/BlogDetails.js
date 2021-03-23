@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 import {
   useBlogsService,
@@ -68,10 +69,10 @@ const BlogDetails = () => {
       <a href={blog.url}>{blog.url}</a>
       <div>
         {blog.likes} likes{" "}
-        <button onClick={() => handleBlogLike(blog)}>like</button>
+        <Button onClick={() => handleBlogLike(blog)}>like</Button>
       </div>
       <div>added by {user ? user.name : "?"}</div>
-      <button onClick={onBlogRemove}>remove</button>
+      <Button onClick={onBlogRemove}>remove</Button>
       <Comments blog={blog} />
     </>
   );
@@ -91,7 +92,7 @@ const Comments = ({ blog }) => {
     <>
       <h3>comments</h3>
       <input value={text} onChange={(e) => setText(e.target.value)} />
-      <button onClick={handleCreateComment}>add comment</button>
+      <Button onClick={handleCreateComment}>add comment</Button>
       <ul>{comments.map(Comment)}</ul>
     </>
   );

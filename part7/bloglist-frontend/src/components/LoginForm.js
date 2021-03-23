@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Button } from "react-bootstrap";
 
 import loginService from "../services/login";
 import { useBlogsService } from "../hooks/index";
@@ -57,9 +58,9 @@ const LoginForm = () => {
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button id="login-button" type="submit">
+        <Button id="login-button" type="submit">
           login
-        </button>
+        </Button>
       </form>
     </div>
   );

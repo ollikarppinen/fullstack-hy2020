@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Button } from "react-bootstrap";
 
 import { useBlogsService } from "../hooks/index";
 import { removeCurrentUser } from "../reducers/currentUser";
@@ -20,7 +21,7 @@ const LogoutForm = () => {
   return (
     <>
       {currentUser.name} logged in
-      <button onClick={handleLogout}>log out</button>
+      <Button onClick={handleLogout}>log out</Button>
     </>
   );
 };

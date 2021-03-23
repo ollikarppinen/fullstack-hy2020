@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { Button } from "react-bootstrap";
 
 const Blog = ({ blog, removeBlog, likeBlog }) => {
   const { title, author, url, likes } = blog;
@@ -19,18 +20,18 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
       <div>{url}</div>
       <div>
         {likes}
-        <button
+        <Button
           id="like-blog-button"
           className="likeButton"
           onClick={() => likeBlog(blog)}
         >
           like
-        </button>
+        </Button>
       </div>
       <div>{author}</div>
-      <button id="remove-blog-button" onClick={onBlogRemove}>
+      <Button id="remove-blog-button" onClick={onBlogRemove}>
         remove
-      </button>
+      </Button>
     </div>
   );
 
@@ -43,12 +44,12 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
   return (
     <div style={blogStyle} className="blog">
       {title} {author}
-      <button
+      <Button
         className="showDetailsButton"
         onClick={() => setShowDetails(!showDetails)}
       >
         {showDetails ? "hide" : "view"}
-      </button>
+      </Button>
       {showDetails && blogDetails()}
     </div>
   );
