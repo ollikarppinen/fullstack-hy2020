@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 
 import loginService from "../services/login";
 import { useBlogsService } from "../hooks/index";
@@ -34,35 +34,35 @@ const LoginForm = () => {
   };
 
   return (
-    <div>
+    <>
       <h2>log in to application</h2>
       <Notification />
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>username</Form.Label>
+          <Form.Control
             id="username"
             type="text"
             value={username}
             name="Username"
             onChange={({ target }) => setUsername(target.value)}
           />
-        </div>
-        <div>
-          password
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>password</Form.Label>
+          <Form.Control
             id="password"
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
-        </div>
+        </Form.Group>
         <Button id="login-button" type="submit">
           login
         </Button>
-      </form>
-    </div>
+      </Form>
+    </>
   );
 };
 

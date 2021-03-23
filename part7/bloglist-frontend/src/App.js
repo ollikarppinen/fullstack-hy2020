@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Container } from "react-bootstrap";
 
 import "./App.css";
 
@@ -16,10 +17,15 @@ import Navbar from "./components/Navbar";
 const App = () => {
   const currentUser = useSelector(({ currentUser }) => currentUser);
 
-  if (!currentUser) return <LoginForm />;
+  if (!currentUser)
+    return (
+      <Container>
+        <LoginForm />
+      </Container>
+    );
 
   return (
-    <div className="container">
+    <Container>
       <Router>
         <Navbar />
         <Notification />
@@ -41,7 +47,7 @@ const App = () => {
           </Route>
         </Switch>
       </Router>
-    </div>
+    </Container>
   );
 };
 
