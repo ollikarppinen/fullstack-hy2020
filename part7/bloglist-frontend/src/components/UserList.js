@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Table } from "react-bootstrap";
 
 import { useUsersService } from "../hooks/index";
 import { getAllUsers } from "../reducers/users";
@@ -17,13 +18,15 @@ const UserList = () => {
   const users = useSelector(({ users: { users } }) => users);
 
   const usersTable = () => (
-    <table>
-      <tr>
-        <th></th>
-        <th>blogs created</th>
-      </tr>
-      {users.map(User)}
-    </table>
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>blogs created</th>
+        </tr>
+      </thead>
+      <tbody>{users.map(User)}</tbody>
+    </Table>
   );
 
   return (
