@@ -73,7 +73,6 @@ const BlogDetails = () => {
         <Card.Header as="h1">
           {blog.title} {blog.author}
         </Card.Header>
-        <Card.Img variant="top" src="https://picsum.photos/1000/500" />
         <Card.Body>
           {blog.likes} likes{" "}
           <Button onClick={() => handleBlogLike(blog)}>like</Button>
