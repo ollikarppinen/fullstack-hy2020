@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import {
+  Button,
+  ListGroup,
+  Card,
+  InputGroup,
+  FormControl,
+} from "react-bootstrap";
 
 import {
   useBlogsService,
@@ -63,17 +69,25 @@ const BlogDetails = () => {
 
   return (
     <>
-      <h1>
-        {blog.title} {blog.author}
-      </h1>
-      <a href={blog.url}>{blog.url}</a>
-      <div>
-        {blog.likes} likes{" "}
-        <Button onClick={() => handleBlogLike(blog)}>like</Button>
-      </div>
-      <div>added by {user ? user.name : "?"}</div>
-      <Button onClick={onBlogRemove}>remove</Button>
-      <Comments blog={blog} />
+      <Card>
+        <Card.Header as="h1">
+          {blog.title} {blog.author}
+        </Card.Header>
+        <Card.Img variant="top" src="https://picsum.photos/1000/500" />
+        <Card.Body>
+          {blog.likes} likes{" "}
+          <Button onClick={() => handleBlogLike(blog)}>like</Button>
+          <p>added by {user ? user.name : "?"}</p>
+          <Card.Link href={blog.url}>{blog.url}</Card.Link>
+        </Card.Body>
+
+        <Card.Body>
+          <Button onClick={onBlogRemove}>remove</Button>
+        </Card.Body>
+        <Card.Body>
+          <Comments blog={blog} />
+        </Card.Body>
+      </Card>
     </>
   );
 };
@@ -88,16 +102,27 @@ const Comments = ({ blog }) => {
     dispatch(handleError(createComment(blogCommentsService, { text })));
 
   const { comments } = blog;
+
   return (
-    <>
-      <h3>comments</h3>
-      <input value={text} onChange={(e) => setText(e.target.value)} />
-      <Button onClick={handleCreateComment}>add comment</Button>
-      <ul>{comments.map(Comment)}</ul>
-    </>
+    <div>
+      <h3>{comments.length ? "comments" : "no comments yet"}</h3>
+      <ListGroup>{comments.map(Comment)}</ListGroup>
+      <InputGroup className="mb-3">
+        <FormControl
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          aria-describedby="basic-addon1"
+        />
+        <InputGroup.Prepend>
+          <Button onClick={handleCreateComment}>add comment</Button>
+        </InputGroup.Prepend>
+      </InputGroup>
+    </div>
   );
 };
 
-const Comment = ({ id, text }) => <li key={id}>{text}</li>;
+const Comment = ({ id, text }) => (
+  <ListGroup.Item key={id}>{text}</ListGroup.Item>
+);
 
 export default BlogDetails;

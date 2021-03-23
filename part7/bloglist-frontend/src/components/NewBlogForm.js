@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Button } from "react-bootstrap";
+import { Button, Form, Container } from "react-bootstrap";
 
 const NewBlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState("");
@@ -17,41 +17,41 @@ const NewBlogForm = ({ createBlog }) => {
   return (
     <div>
       <h2>create new</h2>
-      <form onSubmit={onBlogCreate}>
-        <div>
-          title
-          <input
+      <Form onSubmit={onBlogCreate}>
+        <Form.Group>
+          <Form.Label>title</Form.Label>
+          <Form.Control
             id="title"
             type="text"
             value={title}
             name="Title"
             onChange={({ target }) => setTitle(target.value)}
           />
-        </div>
-        <div>
-          author
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>author</Form.Label>
+          <Form.Control
             id="author"
             type="text"
             value={author}
             name="Author"
             onChange={({ target }) => setAuthor(target.value)}
           />
-        </div>
-        <div>
-          url
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>url</Form.Label>
+          <Form.Control
             id="url"
             type="text"
             value={url}
             name="URL"
             onChange={({ target }) => setUrl(target.value)}
           />
-        </div>
+        </Form.Group>
         <Button id="submit-new-blog" type="submit">
           create
         </Button>
-      </form>
+      </Form>
     </div>
   );
 };

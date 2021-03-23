@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
+import { ListGroup } from "react-bootstrap";
 
 import { useUsersService } from "../hooks/index";
 import { getAllUsers } from "../reducers/users";
@@ -34,13 +35,13 @@ const UserDetails = () => {
 
 const BlogList = ({ user: { blogs } }) => {
   if (blogs.length === 0) return "No blogs";
-  return <ul>{blogs.map(BlogListItem)}</ul>;
+  return <ListGroup>{blogs.map(BlogListItem)}</ListGroup>;
 };
 
 const BlogListItem = ({ id, title }) => (
-  <li key={id}>
+  <ListGroup.Item key={id}>
     <Link to={`/blogs/${id}`}>{title}</Link>
-  </li>
+  </ListGroup.Item>
 );
 
 export default UserDetails;
