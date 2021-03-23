@@ -25,9 +25,9 @@ const App = () => {
     );
 
   return (
-    <Container>
-      <Router>
-        <Navbar />
+    <Router>
+      <Navbar />
+      <Container>
         <Notification />
         <Switch>
           <Route exact path={["/", "/blogs"]}>
@@ -46,8 +46,8 @@ const App = () => {
             <NoMatch />
           </Route>
         </Switch>
-      </Router>
-    </Container>
+      </Container>
+    </Router>
   );
 };
 

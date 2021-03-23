@@ -32,7 +32,6 @@ const BlogList = () => {
   };
   return (
     <>
-      <h2>Blogs</h2>
       <Togglable
         showButtonLabel="new blog"
         hideButtonLabel="cancel"

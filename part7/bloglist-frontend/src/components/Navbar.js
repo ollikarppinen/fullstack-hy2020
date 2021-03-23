@@ -1,16 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Navbar, Nav } from "react-bootstrap";
 
 import LogoutForm from "./LogoutForm";
 
-const Navbar = () => {
+const NavigationBar = () => {
   return (
-    <div className="navbar">
-      <Link to={`/blogs`}>blogs</Link>
-      <Link to={`/users`}>users</Link>
+    <Navbar>
+      <Navbar.Brand href="#home">Blogs App</Navbar.Brand>
+      <Nav className="mr-auto">
+        <Nav.Link>
+          <Link to={`/blogs`}>blogs</Link>
+        </Nav.Link>
+        <Nav.Link>
+          <Link to={`/users`}>users</Link>
+        </Nav.Link>
+      </Nav>
       <LogoutForm />
-    </div>
+    </Navbar>
   );
 };
 
-export default Navbar;
+export default NavigationBar;
