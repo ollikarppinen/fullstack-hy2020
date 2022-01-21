@@ -20,8 +20,12 @@ const useCountry = (name) => {
 
   useEffect(() => {
     axios
-      .get(`https://restcountries.eu/rest/v2/name/${name}?fullText=true`)
-      .then((response) => setCountry({ data: response.data[0], found: true }))
+      .get(`https://restcountries.com/v2/name/${name}?fullText=true`)
+      .then((response) => {
+        response.data.status == 404
+          ? setCountry(null)
+          : setCountry({ data: response.data[0], found: true });
+      })
       .catch(() => setCountry(null));
   }, [name]);
 
