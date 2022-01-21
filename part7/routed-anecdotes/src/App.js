@@ -179,7 +179,7 @@ const Content = () => {
     setAnecdotes(anecdotes.concat(anecdote));
     setNotification(`a new anecdote ${anecdote.content} created!`);
     setTimeout(() => setNotification(""), 3000);
-    history.push(`/anecdotes/${anecdote.id}`);
+    history.push(`/anecdotes`);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -198,8 +198,8 @@ const Content = () => {
   return (
     <>
       <h1>Software anecdotes</h1>
-      <div>{notification}</div>
       <Menu />
+      <div>{notification}</div>
       <Switch>
         <Route path="/anecdotes/:id">
           <Anecdote anecdotes={anecdotes} />
