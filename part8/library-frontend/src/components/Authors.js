@@ -16,6 +16,14 @@ const Authors = ({ show }) => {
     return null;
   }
 
+  // <select>
+  //   <option value="grapefruit">Grapefruit</option>
+  //   <option value="lime">Lime</option>
+  //   <option selected value="coconut">
+  //     Coconut
+  //   </option>
+  //   <option value="mango">Mango</option>
+  // </select>;
   const authors = authorQueryResult.loading
     ? []
     : authorQueryResult.data.allAuthors;
@@ -57,10 +65,16 @@ const Authors = ({ show }) => {
       <form onSubmit={submit}>
         <div>
           name
-          <input
+          <select
             value={authorName}
             onChange={({ target }) => setAuthorName(target.value)}
-          />
+          >
+            {authors.map(({ name }) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           birthyear
