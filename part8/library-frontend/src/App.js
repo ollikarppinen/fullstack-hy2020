@@ -1,18 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 
-import { ApolloClient, HttpLink, InMemoryCache, gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: new HttpLink({
-    uri: "http://localhost:4000",
-  }),
-});
-
-const query = gql`
+const ALL_AUTHORS = gql`
   query AllAuthors {
     allAuthors {
       bookCount
@@ -24,13 +17,10 @@ const query = gql`
 
 const App = () => {
   const [page, setPage] = useState("authors");
-  const [authors, setAuthors] = useState([]);
-
-  useEffect(() => {
-    client.query({ query }).then((response) => {
-      setAuthors(response.data.allAuthors);
-    });
-  });
+  const authorQueryResult = useQuery(ALL_AUTHORS);
+  const authors = authorQueryResult.loading
+    ? []
+    : authorQueryResult.data.allAuthors;
 
   return (
     <div>
