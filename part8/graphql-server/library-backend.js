@@ -59,20 +59,20 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     authorCount: () => authors.length,
-    bookCount: () => books.length,
-    allBooks: (root, args) => {
-      let filteredBooks = books;
-      if (!!args.author) {
-        filteredBooks = filteredBooks.filter(
-          ({ author }) => author === args.author
-        );
-      }
-      if (!!args.genre) {
-        filteredBooks = filteredBooks.filter(({ genres }) =>
-          genres.includes(args.genre)
-        );
-      }
-      return filteredBooks;
+    bookCount: () => Book.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      // let books = Book.find({});
+      // if (!!args.author) {
+      //   filteredBooks = filteredBooks.filter(
+      //     ({ author }) => author === args.author
+      //   );
+      // }
+      // if (!!args.genre) {
+      //   filteredBooks = filteredBooks.filter(({ genres }) =>
+      //     genres.includes(args.genre)
+      //   );
+      // }
+      return await Book.find({});
     },
     allAuthors: () => authors,
   },
