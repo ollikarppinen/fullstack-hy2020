@@ -3,6 +3,7 @@ const { v1: uuid } = require("uuid");
 
 const mongoose = require("mongoose");
 const Book = require("./models/book");
+const Author = require("./models/author");
 
 require("dotenv").config();
 
@@ -43,7 +44,12 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    addBook(title: String!, published: Int, genres: [String!]!): Book
+    addBook(
+      title: String!
+      published: Int!
+      genres: [String!]!
+      author: String!
+    ): Book
     editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
@@ -65,9 +71,17 @@ const resolvers = {
       books.filter(({ author }) => author == root.name).length,
   },
   Mutation: {
-    addBook: (root, args) => {
-      console.log("args", args);
+    addBook: async (root, args) => {
+      const authorArgs = { name: args.author };
+      delete args.author;
+
+      let author = await Author.findOne(authorArgs);
+      if (!author) {
+        author = new Author(authorArgs);
+        await author.save();
+      }
       const book = new Book(args);
+      book.author = author;
       return book.save();
     },
     editAuthor: (root, args) => {
