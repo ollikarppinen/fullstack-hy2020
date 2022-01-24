@@ -24,11 +24,11 @@ mongoose
 
 const typeDefs = gql`
   type Book {
-    title: String
-    published: Int
-    author: String
+    title: String!
+    published: Int!
+    author: Author!
+    genres: [String!]!
     id: ID!
-    genres: [String]
   }
 
   type Author {
@@ -46,12 +46,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    addBook(
-      title: String!
-      author: String
-      published: Int
-      genres: [String!]!
-    ): Book
+    addBook(title: String!, published: Int, genres: [String!]!): Book
     editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
@@ -61,17 +56,6 @@ const resolvers = {
     authorCount: () => authors.length,
     bookCount: () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
-      // let books = Book.find({});
-      // if (!!args.author) {
-      //   filteredBooks = filteredBooks.filter(
-      //     ({ author }) => author === args.author
-      //   );
-      // }
-      // if (!!args.genre) {
-      //   filteredBooks = filteredBooks.filter(({ genres }) =>
-      //     genres.includes(args.genre)
-      //   );
-      // }
       return await Book.find({});
     },
     allAuthors: () => authors,
@@ -83,13 +67,8 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
-      const book = { ...args, id: uuid() };
-      books = books.concat(book);
-      if (!authors.find(({ name }) => name === args.author)) {
-        const author = { name: args.author, id: uuid() };
-        authors = authors.concat(author);
-      }
-      return book;
+      const book = new Book(args);
+      return book.save();
     },
     editAuthor: (root, args) => {
       const author = authors.find(({ name }) => name === args.name);
