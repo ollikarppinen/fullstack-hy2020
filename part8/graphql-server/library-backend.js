@@ -1,4 +1,9 @@
-const { ApolloServer, gql, UserInputError } = require("apollo-server");
+const {
+  ApolloServer,
+  gql,
+  UserInputError,
+  AuthenticationError,
+} = require("apollo-server");
 
 const jwt = require("jsonwebtoken");
 
@@ -84,20 +89,26 @@ const resolvers = {
       } else if (args.genre) {
         query.genres = { $in: [args.genre] };
       }
-
-      return await Book.find(query);
+      return Book.find(query).populate("author");
     },
     allAuthors: async (root, args) => {
       return await Author.find({});
     },
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
   },
   Author: {
-    name: (root) => root.name,
-    bookCount: (root) =>
-      books.filter(({ author }) => author == root.name).length,
+    bookCount(parent) {
+      return Book.collection.countDocuments({ author: parent._id });
+    },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new AuthenticationError("not authenticated");
+      }
       const authorArgs = { name: args.author };
       delete args.author;
 
@@ -125,7 +136,12 @@ const resolvers = {
         });
       }
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new AuthenticationError("not authenticated");
+      }
+
       let author = await Author.findOne({ name: args.name });
       if (!author) {
         throw new UserInputError("author not found", {
@@ -176,6 +192,14 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+    const auth = req ? req.headers.authorization : null;
+    if (auth && auth.toLowerCase().startsWith("bearer ")) {
+      const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET);
+      const currentUser = await User.findById(decodedToken.id);
+      return { currentUser };
+    }
+  },
 });
 
 server.listen().then(({ url }) => {
