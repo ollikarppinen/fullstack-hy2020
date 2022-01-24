@@ -10,9 +10,6 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log("connecting to", MONGODB_URI);
 
-const books = [];
-const authors = [];
-
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
@@ -53,12 +50,14 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    authorCount: () => authors.length,
+    authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
       return await Book.find({});
     },
-    allAuthors: () => authors,
+    allAuthors: async (root, args) => {
+      return await Author.find({});
+    },
   },
   Author: {
     name: (root) => root.name,
@@ -67,6 +66,7 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
+      console.log("args", args);
       const book = new Book(args);
       return book.save();
     },
