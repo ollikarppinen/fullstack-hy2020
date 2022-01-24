@@ -1,5 +1,4 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { v1: uuid } = require("uuid");
+const { ApolloServer, gql, UserInputError } = require("apollo-server");
 
 const mongoose = require("mongoose");
 const Book = require("./models/book");
@@ -84,17 +83,16 @@ const resolvers = {
       book.author = author;
       return book.save();
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(({ name }) => name === args.name);
+    editAuthor: async (root, args) => {
+      let author = await Author.findOne({ name: args.name });
       if (!author) {
-        return null;
+        throw new UserInputError("author not found", {
+          invalidArgs: args,
+        });
       }
 
-      const updatedAuthor = { ...author, born: args.setBornTo };
-      authors = authors.map((author) =>
-        author.name === args.name ? updatedAuthor : author
-      );
-      return updatedAuthor;
+      author.born = args.setBornTo;
+      return author.save();
     },
   },
 };
