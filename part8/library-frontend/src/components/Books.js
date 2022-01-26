@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 
 const Books = ({ show }) => {
-  const bookQueryResult = useQuery(ALL_BOOKS);
+  const [author, setAuthor] = useState(null);
+  const [genre, setGenre] = useState(null);
+  const bookQueryResult = useQuery(ALL_BOOKS, { variables: { author, genre } });
 
   if (!show) {
     return null;
   }
   const books = bookQueryResult.loading ? [] : bookQueryResult.data.allBooks;
+  const uniqueGenres = [...new Set(books.flatMap(({ genres }) => genres))];
 
   return (
     <div>
@@ -31,6 +34,13 @@ const Books = ({ show }) => {
           ))}
         </tbody>
       </table>
+      <div>
+        {uniqueGenres.map((genre) => (
+          <button key={genre} onClick={() => setGenre(genre)}>
+            {genre}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
