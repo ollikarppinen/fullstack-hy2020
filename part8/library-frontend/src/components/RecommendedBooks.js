@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 
-const Books = ({ show }) => {
-  const [genre, setGenre] = useState(null);
+const RecommendedBooks = ({ show, genre }) => {
   const bookQueryResult = useQuery(ALL_BOOKS, { variables: { genre } });
 
   if (!show) {
     return null;
   }
   const books = bookQueryResult.loading ? [] : bookQueryResult.data.allBooks;
-  const uniqueGenres = [...new Set(books.flatMap(({ genres }) => genres))];
 
   return (
     <div>
-      <h2>books</h2>
+      <h2>recommendations</h2>
+
+      <div>
+        books in your favorite genre <strong>{genre}</strong>
+      </div>
 
       <table>
         <tbody>
@@ -33,15 +35,8 @@ const Books = ({ show }) => {
           ))}
         </tbody>
       </table>
-      <div>
-        {uniqueGenres.map((genre) => (
-          <button key={genre} onClick={() => setGenre(genre)}>
-            {genre}
-          </button>
-        ))}
-      </div>
     </div>
   );
 };
 
-export default Books;
+export default RecommendedBooks;

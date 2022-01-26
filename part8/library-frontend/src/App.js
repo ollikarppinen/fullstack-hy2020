@@ -1,19 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useLazyQuery } from "@apollo/client";
 
 import Authors from "./components/Authors";
 import Books from "./components/Books";
+import RecommendedBooks from "./components/RecommendedBooks";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
+import { ME } from "./queries";
 
 const App = () => {
   const [token, setToken] = useState(null);
   const [page, setPage] = useState("authors");
   const [error, setError] = useState("error");
 
+  const [makeMeQuery, meQueryResult] = useLazyQuery(ME);
+
   useEffect(() => {
-    if (token && page == "login") setPage("books");
-  }, [token]);
+    if (token) makeMeQuery();
+  }, [token, makeMeQuery]);
+
+  useEffect(() => {
+    if (token && page === "login") setPage("books");
+  }, [token, page]);
 
   const client = useApolloClient();
   const logout = () => {
@@ -30,6 +38,9 @@ const App = () => {
         {token ? (
           <button onClick={() => setPage("add")}>add book</button>
         ) : null}
+        {token ? (
+          <button onClick={() => setPage("recommended")}>recommended</button>
+        ) : null}
         {!token ? (
           <button onClick={() => setPage("login")}>login</button>
         ) : null}
@@ -45,6 +56,11 @@ const App = () => {
       <Authors token={token} show={page === "authors"} />
 
       <Books show={page === "books"} />
+
+      <RecommendedBooks
+        genre={meQueryResult?.data?.me?.favoriteGenre}
+        show={page === "recommended"}
+      />
 
       <NewBook show={page === "add"} />
     </div>
