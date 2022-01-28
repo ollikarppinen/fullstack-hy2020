@@ -10,7 +10,7 @@ const Books = ({ show }) => {
   if (!show) {
     return null;
   }
-  const books = bookQueryResult.loading ? [] : bookQueryResult.data.allBooks;
+  const books = bookQueryResult?.loading ? [] : bookQueryResult?.data?.allBooks;
   const uniqueGenres = [...new Set(books.flatMap(({ genres }) => genres))];
 
   return (

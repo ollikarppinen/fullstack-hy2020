@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useApolloClient, useLazyQuery } from "@apollo/client";
+import { useApolloClient, useLazyQuery, useSubscription } from "@apollo/client";
 
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import RecommendedBooks from "./components/RecommendedBooks";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
-import { ME } from "./queries";
+import { ME, BOOK_ADDED } from "./queries";
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -22,6 +22,13 @@ const App = () => {
   useEffect(() => {
     if (token && page === "login") setPage("books");
   }, [token, page]);
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log("subscriptionData", subscriptionData);
+      alert("Book added!");
+    },
+  });
 
   const client = useApolloClient();
   const logout = () => {
