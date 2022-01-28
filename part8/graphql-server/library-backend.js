@@ -20,6 +20,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 console.log("connecting to", MONGODB_URI);
 
+mongoose.set("debug", true);
+
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
@@ -82,6 +84,19 @@ const typeDefs = gql`
 
 const pubsub = new PubSub();
 
+const bookCountByAuthor = async () => {
+  const aggregatorOpts = [
+    {
+      $group: {
+        _id: "$author",
+        count: { $sum: 1 },
+      },
+    },
+  ];
+  const queryResult = await Book.aggregate(aggregatorOpts).exec();
+  return queryResult.reduce((res, el) => ({ ...res, [el._id]: el.count }), {});
+};
+
 const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
@@ -106,8 +121,8 @@ const resolvers = {
     },
   },
   Author: {
-    bookCount(parent) {
-      return Book.collection.countDocuments({ author: parent._id });
+    async bookCount(root, _, context) {
+      return context.bookCountByAuthor[root._id];
     },
   },
   Mutation: {
@@ -209,12 +224,16 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
+    const context = {};
     const auth = req ? req.headers.authorization : null;
     if (auth && auth.toLowerCase().startsWith("bearer ")) {
       const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET);
       const currentUser = await User.findById(decodedToken.id);
-      return { currentUser };
+      context.currentUser = currentUser;
     }
+    // TODO: Make conditional
+    context.bookCountByAuthor = await bookCountByAuthor();
+    return context;
   },
 });
 
