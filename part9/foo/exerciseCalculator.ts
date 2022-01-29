@@ -44,4 +44,15 @@ const calculateExercises = (hours: number[], target: number): ResultoObject => {
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const [_cmd1, _cmd2, targetArg, ...hoursArg] = process.argv;
+  const target: number = Number(targetArg);
+  const hours: number[] = hoursArg.map((i) => Number(i));
+  console.log(calculateExercises(hours, target));
+} catch (error: unknown) {
+  let errorMessage = "Something went wrong.";
+  if (error instanceof Error) {
+    errorMessage += " Error: " + error.message;
+  }
+  console.log(errorMessage);
+}
