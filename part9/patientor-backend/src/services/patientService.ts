@@ -1,19 +1,20 @@
 import { v4 as uuidv4 } from "uuid";
 
-import patients from "../../data/patients.json";
+import patientData from "../../data/patients.json";
 import { Patient, NonSensitivePatient, NewPatient } from "../types";
+import toNewPatient from "../utils";
+
+const patients: Patient[] = patientData.map(({ id, ...obj }) => {
+  return {
+    id,
+    ...toNewPatient(obj),
+  };
+});
 
 const getEntries = (): Patient[] => patients;
 
-const getNonSensitiveEntries = (): NonSensitivePatient[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    occupation,
-  }));
-};
+const getNonSensitiveEntries = (): NonSensitivePatient[] =>
+  patients.map(({ ssn, ...patient }) => patient);
 
 const addEntry = (entry: NewPatient): Patient => {
   const newPatient = {
