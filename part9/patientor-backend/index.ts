@@ -1,9 +1,11 @@
 import express from "express";
 import diagnoseRouter from "./src/routes/diagnoses";
 import patientRouter from "./src/routes/patients";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: true, credentials: true }));
 
 const PORT = 3001;
 
