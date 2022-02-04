@@ -6,6 +6,7 @@ import { Container, Icon, SemanticICONS } from "semantic-ui-react";
 import { useParams } from "react-router-dom";
 import { useStateValue } from "../state";
 import { Gender, Patient } from "../types";
+import { addPatient } from "../state/reducer";
 
 const PatientShowPage = () => {
   const { id }: { id?: string | undefined } = useParams();
@@ -22,7 +23,7 @@ const PatientShowPage = () => {
         const { data: patientFromApi } = await axios.get<Patient>(
           `${apiBaseUrl}/patients/${id}`
         );
-        dispatch({ type: "ADD_PATIENT", payload: patientFromApi });
+        dispatch(addPatient(patientFromApi));
       } catch (e) {
         console.error(e);
       }
