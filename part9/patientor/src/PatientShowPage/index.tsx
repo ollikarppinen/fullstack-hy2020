@@ -80,13 +80,16 @@ const Entry = ({
   return (
     <div key={id}>
       {date} <em>{description}</em>
-      <ul>
-        {diagnosisCodes.map((code) => (
-          <li key={code}>{code}</li>
-        ))}
-      </ul>
+      <ul>{diagnosisCodes.map(Diagnose)}</ul>
     </div>
   );
+};
+
+const Diagnose = (code: string) => {
+  const [{ diagnosis }] = useStateValue();
+
+  const name = diagnosis[code]?.name;
+  return <li key={code}>{`${code} ${name}`}</li>;
 };
 
 export default PatientShowPage;
