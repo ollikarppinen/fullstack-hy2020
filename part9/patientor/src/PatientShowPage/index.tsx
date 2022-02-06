@@ -15,7 +15,14 @@ const PatientShowPage = () => {
   if (!id) return null;
 
   const patient: Patient | undefined = patients[id];
-  const { name, gender, ssn, occupation, dateOfBirth } = patient || {};
+  const {
+    name,
+    gender,
+    ssn,
+    occupation,
+    dateOfBirth,
+    entries = [],
+  } = patient || {};
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -52,7 +59,32 @@ const PatientShowPage = () => {
         <div>ssn: {ssn}</div>
         <div>occupation: {occupation}</div>
         <div>dateOfBirth: {dateOfBirth}</div>
+        <h3>entries</h3>
+        {entries.map(Entry)}
       </Container>
+    </div>
+  );
+};
+
+const Entry = ({
+  id,
+  date,
+  description,
+  diagnosisCodes = [],
+}: {
+  id: string;
+  date: string;
+  description: string;
+  diagnosisCodes: string[];
+}) => {
+  return (
+    <div key={id}>
+      {date} <em>{description}</em>
+      <ul>
+        {diagnosisCodes.map((code) => (
+          <li key={code}>{code}</li>
+        ))}
+      </ul>
     </div>
   );
 };
