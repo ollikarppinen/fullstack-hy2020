@@ -82,7 +82,7 @@ const parseEntry = ({
       return {
         id: parseString(id),
         date: parseDate(date),
-        type: EntryType.Hospital,
+        type: EntryType.OccupationalHealthcare,
         specialist: parseString(specialist),
         diagnosisCodes: parseStringArray(diagnosisCodes),
         description: parseString(description),
