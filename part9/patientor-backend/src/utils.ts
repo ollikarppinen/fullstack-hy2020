@@ -16,7 +16,7 @@ type PatientFields = {
   entries?: unknown;
 };
 
-const toNewPatient = ({
+export const toNewPatient = ({
   name,
   dateOfBirth,
   ssn,
@@ -36,7 +36,7 @@ const toNewPatient = ({
   return newPatient;
 };
 
-type EntryFields = {
+export type EntryFields = {
   id: unknown;
   date: unknown;
   type: unknown;
@@ -54,7 +54,7 @@ const parseEntries = (entries: unknown): Entry[] => {
   return entries.map(parseEntry);
 };
 
-const parseEntry = ({
+export const parseEntry = ({
   id,
   date,
   type,
@@ -69,6 +69,7 @@ const parseEntry = ({
 
   switch (entryType) {
     case EntryType.Hospital:
+      console.log("EntryType.Hospital");
       return {
         id: parseString(id),
         date: parseDate(date),
@@ -182,5 +183,3 @@ const isString = (text: unknown): text is string => {
 const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
-
-export default toNewPatient;

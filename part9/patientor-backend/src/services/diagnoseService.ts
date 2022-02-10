@@ -3,13 +3,13 @@ import { Diagnose } from "../types";
 
 // const diagnoses: Diagnose[] = diagnoseData;
 
-const getEntries = (): Diagnose[] => diagnoses;
+const getDiagnoses = (): Diagnose[] => diagnoses;
 
-const addEntry = () => {
+const addDiagnse = () => {
   return null;
 };
 
 export default {
-  getEntries,
-  addEntry,
+  getDiagnoses,
+  addDiagnse,
 };
