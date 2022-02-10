@@ -2,15 +2,40 @@ import React, { useEffect } from "react";
 import axios from "axios";
 
 import { apiBaseUrl } from "../constants";
-import { Container, Icon, SemanticICONS, Card, Feed } from "semantic-ui-react";
+import {
+  Container,
+  Icon,
+  SemanticICONS,
+  Card,
+  Feed,
+  Button,
+  SemanticCOLORS,
+} from "semantic-ui-react";
 import { useParams } from "react-router-dom";
 import { useStateValue } from "../state";
-import { Gender, Patient, EntryType, Discharge, SickLeave } from "../types";
+import {
+  Gender,
+  Patient,
+  EntryType,
+  Discharge,
+  SickLeave,
+  HealthCheckRating,
+} from "../types";
 import { addPatient } from "../state/reducer";
+import AddEntryModal from "../AddEntryModal";
 
 const PatientShowPage = () => {
   const { id }: { id?: string | undefined } = useParams();
   const [{ patients }, dispatch] = useStateValue();
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | undefined>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
 
   if (!id) return null;
 
@@ -50,6 +75,8 @@ const PatientShowPage = () => {
       iconName = "genderless";
   }
 
+  const submitNewEntry = () => console.log("foo");
+
   return (
     <div className="App">
       <Container>
@@ -65,6 +92,13 @@ const PatientShowPage = () => {
           </Card.Content>
           <Feed>{entries.map(Entry)}</Feed>
         </Card>
+        <AddEntryModal
+          modalOpen={modalOpen}
+          onSubmit={submitNewEntry}
+          error={error}
+          onClose={closeModal}
+        />
+        <Button onClick={() => openModal()}>Add New Entry</Button>
       </Container>
     </div>
   );
@@ -78,6 +112,7 @@ interface EntryProps {
   type: EntryType;
   discharge?: Discharge;
   sickLeave?: SickLeave;
+  healthCheckRating?: HealthCheckRating;
 }
 
 const Entry = (props: EntryProps) => {
@@ -87,6 +122,8 @@ const Entry = (props: EntryProps) => {
       return <HospitalEntry {...props} />;
     case EntryType.OccupationalHealthcare:
       return <OccupationalHealthcareEntry {...props} />;
+    case EntryType.HealthCheck:
+      return <HealthCheckEntry {...props} />;
     default:
       return <UnknownEntry {...props} />;
   }
@@ -137,6 +174,47 @@ const OccupationalHealthcareEntry = ({
         <Feed.Extra text>{description}</Feed.Extra>
         <Feed.Extra text>Start date: {sickLeave?.startDate}</Feed.Extra>
         <Feed.Extra text>End date: {sickLeave?.endDate}</Feed.Extra>
+      </Feed.Content>
+    </Feed.Event>
+  );
+};
+
+const HealthCheckEntry = ({
+  id,
+  date,
+  diagnosisCodes,
+  description,
+  healthCheckRating,
+}: EntryProps) => {
+  let iconColor: SemanticCOLORS = "grey";
+  switch (healthCheckRating) {
+    case HealthCheckRating.LowRisk:
+      iconColor = "yellow";
+      break;
+    case HealthCheckRating.HighRisk:
+      iconColor = "orange";
+      break;
+    case HealthCheckRating.Healthy:
+      iconColor = "green";
+      break;
+    case HealthCheckRating.CriticalRisk:
+      iconColor = "red";
+      break;
+  }
+  return (
+    <Feed.Event key={id}>
+      <Feed.Label>
+        <Icon name="question circle outline" />
+      </Feed.Label>
+      <Feed.Content>
+        {diagnosisCodes.map(Diagnose)}
+        <Feed.Date>{date}</Feed.Date>
+        <Feed.Extra text>{description}</Feed.Extra>
+        <Feed.Meta>
+          <Feed.Like>
+            <Icon name="like" color={iconColor} />
+          </Feed.Like>
+        </Feed.Meta>
       </Feed.Content>
     </Feed.Event>
   );
