@@ -111,7 +111,7 @@ export const parseEntry = ({
 const parseHealthCheckRating = (
   healthCheckRating: unknown
 ): HealthCheckRating => {
-  if (!healthCheckRating || !isHealthCheckRating(healthCheckRating)) {
+  if (!isHealthCheckRating(healthCheckRating)) {
     throw new Error(
       "Incorrect or missing healthCheckRating: " + healthCheckRating
     );
