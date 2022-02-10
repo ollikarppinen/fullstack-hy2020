@@ -5,6 +5,7 @@ import {
   EntryType,
   SickLeave,
   Discharge,
+  HealthCheckRating,
 } from "./types";
 
 type PatientFields = {
@@ -46,6 +47,7 @@ export type EntryFields = {
   employerName?: unknown;
   sickLeave: unknown;
   discharge: unknown;
+  healthCheckRating: unknown;
 };
 
 const parseEntries = (entries: unknown): Entry[] => {
@@ -64,6 +66,7 @@ export const parseEntry = ({
   employerName,
   sickLeave,
   discharge,
+  healthCheckRating,
 }: EntryFields): Entry => {
   const entryType = parseEntryType(type);
 
@@ -90,9 +93,34 @@ export const parseEntry = ({
         employerName: parseString(employerName),
         sickLeave: parseSickLeave(sickLeave),
       };
+    case EntryType.HealthCheck:
+      return {
+        id: parseString(id),
+        date: parseDate(date),
+        type: EntryType.HealthCheck,
+        specialist: parseString(specialist),
+        diagnosisCodes: parseStringArray(diagnosisCodes),
+        description: parseString(description),
+        healthCheckRating: parseHealthCheckRating(healthCheckRating),
+      };
     default:
       throw new Error("Incorrect or missing entry type");
   }
+};
+
+const parseHealthCheckRating = (
+  healthCheckRating: unknown
+): HealthCheckRating => {
+  if (!healthCheckRating || !isHealthCheckRating(healthCheckRating)) {
+    throw new Error(
+      "Incorrect or missing healthCheckRating: " + healthCheckRating
+    );
+  }
+  return healthCheckRating;
+};
+
+const isHealthCheckRating = (param: any): param is HealthCheckRating => {
+  return Object.values(HealthCheckRating).includes(param);
 };
 
 const parseSickLeave = ({ startDate, endDate }: any): SickLeave => {
