@@ -136,7 +136,6 @@ const HospitalEntry = ({
   description,
   discharge,
 }: EntryProps) => {
-  console.log("DISCHARGE", discharge);
   return (
     <Feed.Event key={id}>
       <Feed.Label>

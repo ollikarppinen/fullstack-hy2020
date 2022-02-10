@@ -2,8 +2,14 @@ import React from "react";
 import { Grid, Button } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
 
-import { TextField, SelectField, EntryTypeOption } from "./FormField";
+import {
+  TextField,
+  SelectField,
+  EntryTypeOption,
+  DiagnosisSelection,
+} from "./FormField";
 import { EntryType, Entry } from "../types";
+import { useStateValue } from "../state";
 
 export type EntryFormValues = Omit<Entry, "id" | "entries">;
 
@@ -15,9 +21,11 @@ interface Props {
 const entryTypeOptions: EntryTypeOption[] = [
   { value: EntryType.Hospital, label: "Hospital" },
   { value: EntryType.OccupationalHealthcare, label: "OccupationalHealthcare" },
+  { value: EntryType.HealthCheck, label: "HealthCheck" },
 ];
 
 export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
+  const [{ diagnosis }] = useStateValue();
   return (
     <Formik
       initialValues={{
@@ -31,7 +39,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       validate={(values) => {
         const requiredError = "Field is required";
         const errors: { [field: string]: string } = {};
-        console.log(values, requiredError);
+        console.log("ERRORS", values, requiredError);
         // if (!values.name) {
         //   errors.name = requiredError;
         // }
@@ -47,36 +55,35 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         return errors;
       }}
     >
-      {({ isValid, dirty }) => {
+      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
         return (
           <Form className="form ui">
             <Field
-              label="Name"
-              placeholder="Name"
-              name="name"
+              label="Description"
+              placeholder="Description"
+              name="description"
               component={TextField}
             />
             <Field
-              label="Social Security Number"
-              placeholder="SSN"
-              name="ssn"
+              label="Specialist"
+              placeholder="Specialist"
+              name="specialist"
               component={TextField}
             />
             <Field
-              label="Date Of Birth"
+              label="Date"
               placeholder="YYYY-MM-DD"
-              name="dateOfBirth"
+              name="date"
               component={TextField}
             />
-            <Field
-              label="Occupation"
-              placeholder="Occupation"
-              name="occupation"
-              component={TextField}
+            <DiagnosisSelection
+              setFieldValue={setFieldValue}
+              setFieldTouched={setFieldTouched}
+              diagnoses={Object.values(diagnosis)}
             />
             <SelectField
-              label="Gender"
-              name="gender"
+              label="Entry type"
+              name="type"
               options={entryTypeOptions}
             />
             <Grid>
