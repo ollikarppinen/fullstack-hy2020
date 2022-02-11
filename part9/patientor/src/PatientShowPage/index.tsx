@@ -20,9 +20,11 @@ import {
   Discharge,
   SickLeave,
   HealthCheckRating,
+  Entry,
 } from "../types";
 import { addPatient } from "../state/reducer";
 import AddEntryModal from "../AddEntryModal";
+import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 const PatientShowPage = () => {
   const { id }: { id?: string | undefined } = useParams();
@@ -75,7 +77,18 @@ const PatientShowPage = () => {
       iconName = "genderless";
   }
 
-  const submitNewEntry = () => console.log("foo");
+  const submitNewEntry = async (values: EntryFormValues) => {
+    console.log("submitNewEntry", values);
+    try {
+      // const { data: newEntry } = await axios.post<Entry>(
+      await axios.post<Entry>(`${apiBaseUrl}/patients/${id}/entries`, values);
+      // dispatch(addPatient(newPatient));
+      closeModal();
+    } catch (e: any) {
+      console.error(e.response?.data || "Unknown Error");
+      setError(e.response?.data?.error || "Unknown error");
+    }
+  };
 
   return (
     <div className="App">
@@ -90,7 +103,7 @@ const PatientShowPage = () => {
           <Card.Content>
             <Card.Header>entries</Card.Header>
           </Card.Content>
-          <Feed>{entries.map(Entry)}</Feed>
+          <Feed>{entries.map(EntryFeedEvent)}</Feed>
         </Card>
         <AddEntryModal
           modalOpen={modalOpen}
@@ -115,21 +128,21 @@ interface EntryProps {
   healthCheckRating?: HealthCheckRating;
 }
 
-const Entry = (props: EntryProps) => {
+const EntryFeedEvent = (props: EntryProps) => {
   const { type } = props;
   switch (type) {
     case EntryType.Hospital:
-      return <HospitalEntry {...props} />;
+      return <HospitalEntryFeedEvent {...props} />;
     case EntryType.OccupationalHealthcare:
-      return <OccupationalHealthcareEntry {...props} />;
+      return <OccupationalHealthcareEntryFeedEvent {...props} />;
     case EntryType.HealthCheck:
-      return <HealthCheckEntry {...props} />;
+      return <HealthCheckEntryFeedEvent {...props} />;
     default:
-      return <UnknownEntry {...props} />;
+      return <UnknownEntryFeedEvent {...props} />;
   }
 };
 
-const HospitalEntry = ({
+const HospitalEntryFeedEvent = ({
   id,
   date,
   diagnosisCodes,
@@ -139,10 +152,10 @@ const HospitalEntry = ({
   return (
     <Feed.Event key={id}>
       <Feed.Label>
-        <Icon name="stethoscope" />
+        <Icon name="hospital" />
       </Feed.Label>
       <Feed.Content>
-        {diagnosisCodes.map(Diagnose)}
+        {diagnosisCodes.map(DiagnoseFeedSummary)}
         <Feed.Date>{date}</Feed.Date>
         <Feed.Extra text>{description}</Feed.Extra>
         <Feed.Extra text>
@@ -155,7 +168,7 @@ const HospitalEntry = ({
   );
 };
 
-const OccupationalHealthcareEntry = ({
+const OccupationalHealthcareEntryFeedEvent = ({
   id,
   date,
   diagnosisCodes,
@@ -165,10 +178,10 @@ const OccupationalHealthcareEntry = ({
   return (
     <Feed.Event key={id}>
       <Feed.Label>
-        <Icon name="doctor" />
+        <Icon name="briefcase" />
       </Feed.Label>
       <Feed.Content>
-        {diagnosisCodes.map(Diagnose)}
+        {diagnosisCodes.map(DiagnoseFeedSummary)}
         <Feed.Date>{date}</Feed.Date>
         <Feed.Extra text>{description}</Feed.Extra>
         <Feed.Extra text>Start date: {sickLeave?.startDate}</Feed.Extra>
@@ -178,7 +191,7 @@ const OccupationalHealthcareEntry = ({
   );
 };
 
-const HealthCheckEntry = ({
+const HealthCheckEntryFeedEvent = ({
   id,
   date,
   diagnosisCodes,
@@ -203,10 +216,10 @@ const HealthCheckEntry = ({
   return (
     <Feed.Event key={id}>
       <Feed.Label>
-        <Icon name="question circle outline" />
+        <Icon name="check" />
       </Feed.Label>
       <Feed.Content>
-        {diagnosisCodes.map(Diagnose)}
+        {diagnosisCodes.map(DiagnoseFeedSummary)}
         <Feed.Date>{date}</Feed.Date>
         <Feed.Extra text>{description}</Feed.Extra>
         <Feed.Meta>
@@ -219,7 +232,7 @@ const HealthCheckEntry = ({
   );
 };
 
-const UnknownEntry = ({
+const UnknownEntryFeedEvent = ({
   id,
   date,
   diagnosisCodes,
@@ -228,10 +241,10 @@ const UnknownEntry = ({
   return (
     <Feed.Event key={id}>
       <Feed.Label>
-        <Icon name="question circle outline" />
+        <Icon name="question" />
       </Feed.Label>
       <Feed.Content>
-        {diagnosisCodes.map(Diagnose)}
+        {diagnosisCodes.map(DiagnoseFeedSummary)}
         <Feed.Date>{date}</Feed.Date>
         <Feed.Extra text>{description}</Feed.Extra>
       </Feed.Content>
@@ -239,7 +252,7 @@ const UnknownEntry = ({
   );
 };
 
-const Diagnose = (code: string) => {
+const DiagnoseFeedSummary = (code: string) => {
   const [{ diagnosis }] = useStateValue();
 
   const name = diagnosis[code]?.name;
