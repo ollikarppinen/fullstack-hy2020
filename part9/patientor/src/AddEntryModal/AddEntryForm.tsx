@@ -1,17 +1,34 @@
 import React from "react";
 import { Grid, Button } from "semantic-ui-react";
-import { Field, Formik, Form } from "formik";
+import {
+  Field,
+  Formik,
+  Form,
+  useFormikContext,
+  FormikContextType,
+} from "formik";
 
 import {
   TextField,
   SelectField,
   EntryTypeOption,
   DiagnosisSelection,
+  NumberField,
 } from "./FormField";
-import { EntryType, Entry } from "../types";
+import { EntryType, Discharge, SickLeave, HealthCheckRating } from "../types";
 import { useStateValue } from "../state";
 
-export type EntryFormValues = Omit<Entry, "id" | "entries">;
+export interface EntryFormValues {
+  date: string;
+  type: EntryType;
+  specialist: string;
+  diagnosisCodes: string[];
+  description: string;
+  discharge: Discharge;
+  employerName: string;
+  sickLeave: SickLeave;
+  healthCheckRating: HealthCheckRating;
+}
 
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
@@ -34,24 +51,62 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         specialist: "",
         diagnosisCodes: [],
         description: "",
+        discharge: {
+          date: "",
+          criteria: "",
+        },
+        employerName: "",
+        sickLeave: {
+          startDate: "",
+          endDate: "",
+        },
+        healthCheckRating: 0,
       }}
       onSubmit={onSubmit}
       validate={(values) => {
         const requiredError = "Field is required";
-        const errors: { [field: string]: string } = {};
-        console.log("ERRORS", values, requiredError);
-        // if (!values.name) {
-        //   errors.name = requiredError;
-        // }
-        // if (!values.ssn) {
-        //   errors.ssn = requiredError;
-        // }
-        // if (!values.dateOfBirth) {
-        //   errors.dateOfBirth = requiredError;
-        // }
-        // if (!values.occupation) {
-        //   errors.occupation = requiredError;
-        // }
+        const errors: {
+          // [field: string]: string;
+          [field: string]: string | { [field: string]: string };
+        } = {};
+        console.log("VALUES", values);
+        if (!values.date) {
+          errors.date = requiredError;
+        }
+        if (!values.specialist) {
+          errors.specialist = requiredError;
+        }
+
+        switch (values.type) {
+          case EntryType.Hospital:
+            errors.discharge = {};
+            if (!values.discharge.date) {
+              errors.discharge.date = requiredError;
+            }
+            if (!values.discharge.criteria) {
+              errors.discharge.criteria = requiredError;
+            }
+            break;
+          case EntryType.HealthCheck:
+            if (!values.healthCheckRating) {
+              errors.healthCheckRating = requiredError;
+            }
+            break;
+          case EntryType.OccupationalHealthcare:
+            errors.sickLeave = {};
+            if (!values.sickLeave.startDate) {
+              errors.sickLeave.startDate = requiredError;
+            }
+            if (!values.sickLeave.endDate) {
+              errors.sickLeave.endDate = requiredError;
+            }
+            if (!values.employerName) {
+              errors.employerName = requiredError;
+            }
+            break;
+          default:
+            errors.type = "Unknown type";
+        }
         return errors;
       }}
     >
@@ -86,6 +141,9 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               name="type"
               options={entryTypeOptions}
             />
+            <HospitalEntryFields />
+            <HealthCheckEntryFields />
+            <OccupationalHealthcareEntryFields />
             <Grid>
               <Grid.Column floated="left" width={5}>
                 <Button type="button" onClick={onCancel} color="red">
@@ -108,6 +166,71 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       }}
     </Formik>
   );
+};
+
+const HospitalEntryFields = () => {
+  const formikContext: FormikContextType<EntryFormValues> = useFormikContext();
+  const values: EntryFormValues = formikContext.values;
+  const entryType = values.type;
+  return entryType === EntryType.Hospital ? (
+    <>
+      <Field
+        label="Discharge date"
+        placeholder="YYYY-MM-DD"
+        name="discharge.date"
+        component={TextField}
+      />
+      <Field
+        label="Discharge criteria"
+        placeholder="criteria"
+        name="discharge.criteria"
+        component={TextField}
+      />
+    </>
+  ) : null;
+};
+const HealthCheckEntryFields = () => {
+  const formikContext: FormikContextType<EntryFormValues> = useFormikContext();
+  const values: EntryFormValues = formikContext.values;
+  const entryType = values.type;
+  return entryType === EntryType.HealthCheck ? (
+    <>
+      <Field
+        label="healthCheckRating"
+        name="healthCheckRating"
+        component={NumberField}
+        min={0}
+        max={3}
+      />
+    </>
+  ) : null;
+};
+const OccupationalHealthcareEntryFields = () => {
+  const formikContext: FormikContextType<EntryFormValues> = useFormikContext();
+  const values: EntryFormValues = formikContext.values;
+  const entryType = values.type;
+  return entryType === EntryType.OccupationalHealthcare ? (
+    <>
+      <Field
+        label="Employer name"
+        placeholder="Employer name"
+        name="employerName"
+        component={TextField}
+      />
+      <Field
+        label="Sick leave start date"
+        placeholder="YYYY-MM-DD"
+        name="sickLeave.startDate"
+        component={TextField}
+      />
+      <Field
+        label="Sick leave end date"
+        placeholder="YYYY-MM-DD"
+        name="sickLeave.endDate"
+        component={TextField}
+      />
+    </>
+  ) : null;
 };
 
 export default AddEntryForm;
