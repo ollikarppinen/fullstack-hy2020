@@ -65,13 +65,15 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       onSubmit={onSubmit}
       validate={(values) => {
         const requiredError = "Field is required";
+        const invalidDateError = "Invalid date";
         const errors: {
-          // [field: string]: string;
           [field: string]: string | { [field: string]: string };
         } = {};
         console.log("VALUES", values);
         if (!values.date) {
           errors.date = requiredError;
+        } else if (!isValidDate(values.date)) {
+          errors.date = invalidDateError;
         }
         if (!values.specialist) {
           errors.specialist = requiredError;
@@ -82,6 +84,8 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
             errors.discharge = {};
             if (!values.discharge.date) {
               errors.discharge.date = requiredError;
+            } else if (!isValidDate(values.discharge.date)) {
+              errors.discharge.date = invalidDateError;
             }
             if (!values.discharge.criteria) {
               errors.discharge.criteria = requiredError;
@@ -96,9 +100,13 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
             errors.sickLeave = {};
             if (!values.sickLeave.startDate) {
               errors.sickLeave.startDate = requiredError;
+            } else if (!isValidDate(values.sickLeave.startDate)) {
+              errors.sickLeave.startDate = invalidDateError;
             }
             if (!values.sickLeave.endDate) {
               errors.sickLeave.endDate = requiredError;
+            } else if (!isValidDate(values.sickLeave.endDate)) {
+              errors.sickLeave.endDate = invalidDateError;
             }
             if (!values.employerName) {
               errors.employerName = requiredError;
@@ -232,5 +240,8 @@ const OccupationalHealthcareEntryFields = () => {
     </>
   ) : null;
 };
+
+const isValidDate = (date: string): boolean =>
+  /^\d{4}-\d{1,2}-\d{1,2}$/.test(date);
 
 export default AddEntryForm;
