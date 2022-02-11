@@ -70,6 +70,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
           [field: string]: string | { [field: string]: string };
         } = {};
         console.log("VALUES", values);
+        console.log("ERRORS", errors);
         if (!values.date) {
           errors.date = requiredError;
         } else if (!isValidDate(values.date)) {
@@ -81,15 +82,17 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
 
         switch (values.type) {
           case EntryType.Hospital:
-            errors.discharge = {};
+            const dischargeErrors: { [field: string]: string } = {};
             if (!values.discharge.date) {
-              errors.discharge.date = requiredError;
+              dischargeErrors.date = requiredError;
             } else if (!isValidDate(values.discharge.date)) {
-              errors.discharge.date = invalidDateError;
+              dischargeErrors.date = invalidDateError;
             }
             if (!values.discharge.criteria) {
-              errors.discharge.criteria = requiredError;
+              dischargeErrors.criteria = requiredError;
             }
+            if (Object.keys(dischargeErrors).length)
+              errors.discharge = dischargeErrors;
             break;
           case EntryType.HealthCheck:
             if (!values.healthCheckRating) {
@@ -97,24 +100,27 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
             }
             break;
           case EntryType.OccupationalHealthcare:
-            errors.sickLeave = {};
+            const sickLeaveErrors: { [field: string]: string } = {};
             if (!values.sickLeave.startDate) {
-              errors.sickLeave.startDate = requiredError;
+              sickLeaveErrors.startDate = requiredError;
             } else if (!isValidDate(values.sickLeave.startDate)) {
-              errors.sickLeave.startDate = invalidDateError;
+              sickLeaveErrors.startDate = invalidDateError;
             }
             if (!values.sickLeave.endDate) {
-              errors.sickLeave.endDate = requiredError;
+              sickLeaveErrors.endDate = requiredError;
             } else if (!isValidDate(values.sickLeave.endDate)) {
-              errors.sickLeave.endDate = invalidDateError;
+              sickLeaveErrors.endDate = invalidDateError;
             }
             if (!values.employerName) {
               errors.employerName = requiredError;
             }
+            if (Object.keys(sickLeaveErrors).length)
+              errors.sickLeave = sickLeaveErrors;
             break;
           default:
             errors.type = "Unknown type";
         }
+        console.log("ERRORS", errors);
         return errors;
       }}
     >
