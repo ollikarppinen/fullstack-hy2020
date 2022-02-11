@@ -80,9 +80,14 @@ const PatientShowPage = () => {
   const submitNewEntry = async (values: EntryFormValues) => {
     console.log("submitNewEntry", values);
     try {
-      // const { data: newEntry } = await axios.post<Entry>(
-      await axios.post<Entry>(`${apiBaseUrl}/patients/${id}/entries`, values);
-      // dispatch(addPatient(newPatient));
+      const { data: newEntry } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+      const updatedEntries = patient.entries || [];
+      updatedEntries.push(newEntry);
+      patient.entries = updatedEntries;
+      dispatch(addPatient(patient));
       closeModal();
     } catch (e: any) {
       console.error(e.response?.data || "Unknown Error");
